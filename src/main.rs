@@ -73,7 +73,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
 
     let size_of_array = byte_size_of_array(&f32_numbers);
 
-    gl::BufferData(gl::ARRAY_BUFFER, size_of_array, &mut f32_numbers, gl::STATIC_DRAW) 
+    gl::BufferData(gl::ARRAY_BUFFER, size_of_array, &mut f32_numbers, gl::STATIC_DRAW);
     // * Generate a VBO and bind it
     // * Fill it with data
     // * Configure a VAP for the data and enable it
