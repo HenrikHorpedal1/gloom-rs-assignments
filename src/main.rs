@@ -62,8 +62,8 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // * Generate a VAO and bind it
 
     //let mut my_array: Vec<f32> = Vec::new();
-    let mut array: i32 = 0;
-    let mut n = 1;
+    let mut array: u32 = 0;
+    let n = 1;
     gl::GenVertexArrays(n, &mut array); 
 
     // * Generate a VBO and bind it
