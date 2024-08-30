@@ -66,15 +66,14 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     gl::BindVertexArray(array);
 
     // * Generate a VBO and bind it
-    // * Fill it with data   
     let mut bufferIDs: u32 = 0;
     gl::GenBuffers(n, &mut bufferIDs);
     gl::BindBuffer(gl::ARRAY_BUFFER,bufferIDs);
-
-    let data = vec![2.0, 2.0, 3.0, 4.0, 5.0];
-    let size_of_data = byte_size_of_array(&data);
-
-    gl::BufferData(gl::ARRAY_BUFFER, size_of_data, pointer_to_array(&data), gl::STATIC_DRAW);
+    
+    // * Fill it with data   
+    //let data = vec![2.0, 2.0, 3.0, 4.0, 5.0];
+    let size_of_data = byte_size_of_array(&vertices);
+    gl::BufferData(gl::ARRAY_BUFFER, size_of_data, pointer_to_array(&vertices), gl::STATIC_DRAW);
 
     // * Configure a VAP for the data and enable it
     // void glVertexAttribPointer( unsigned int index, int size, enum type, bool normalised, size_t stride, void* pointer );
@@ -100,11 +99,11 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     let n = 1;
     gl::GenBuffers(n, &mut array);
     gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER,array);
-    let indices = vec![0,1,2,3,4];
+    
+    // * Fill it with data
+    //let indices = vec![0,1,2,3,4];
     gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, byte_size_of_array(&indices), pointer_to_array(&indices),gl::STATIC_DRAW);
 
-
-    // * Fill it with data
     // * Return the ID of the VAO 
     array        
 }
@@ -171,7 +170,10 @@ fn main() {
 
         // == // Set up your VAO around here
 
-        let my_vao = unsafe { 1337 };
+
+        let vertex = vec![1.0,2.0,3.0];
+        let indices = vec![0,1,2];
+        let my_vao = unsafe { create_vao(&vertex, &indices) };
 
 
         // == // Set up your shaders here
@@ -183,13 +185,13 @@ fn main() {
         // This snippet is not enough to do the exercise, and will need to be modified (outside
         // of just using the correct path), but it only needs to be called once
 
-        /*
+        
         let simple_shader = unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./path/to/simple/shader.file")
                 .link()
         };
-        */
+        
 
 
         // Used to demonstrate keyboard handling for exercise 2.
