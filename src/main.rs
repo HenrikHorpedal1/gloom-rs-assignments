@@ -11,8 +11,8 @@ extern crate nalgebra_glm as glm;
 use std::{ mem, ptr, os::raw::c_void };
 use std::thread;
 use std::sync::{Mutex, Arc, RwLock};
-
 mod shader;
+
 mod util;
 
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
@@ -64,7 +64,9 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     let n = 1;
     gl::GenVertexArrays(n, &mut array); 
     gl::BindVertexArray(array);
-    
+
+    // * Generate a VBO and bind it
+    // * Fill it with data   
     let mut bufferIDs: u32 = 0;
     gl::GenBuffers(n, &mut bufferIDs);
     gl::BindBuffer(gl::ARRAY_BUFFER,bufferIDs);
@@ -73,14 +75,38 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     let size_of_data = byte_size_of_array(&data);
 
     gl::BufferData(gl::ARRAY_BUFFER, size_of_data, pointer_to_array(&data), gl::STATIC_DRAW);
-    // * Generate a VBO and bind it
-    // * Fill it with data
-    // * Configure a VAP for the data and enable it
-    // * Generate a IBO and bind it
-    // * Fill it with data
-    // * Return the ID of the VAO
 
-    0    
+    // * Configure a VAP for the data and enable it
+    // void glVertexAttribPointer( unsigned int index, int size, enum type, bool normalised, size_t stride, void* pointer );
+    let index = 1;
+    let dim = 2;
+    let gl_type = gl::FLOAT;
+    let normalize = gl::FALSE;
+    let stride = 0;
+    
+    gl::VertexAttribPointer(
+        index,
+        dim,
+        gl_type,
+        normalize,
+        stride,
+        std::ptr::null(),
+    );
+    //void glEnableVertexAttribArray(unsigned int index);
+    gl::EnableVertexAttribArray(index);
+
+    // * Generate a IBO and bind it
+    let mut array: u32 = 0;
+    let n = 1;
+    gl::GenBuffers(n, &mut array);
+    gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER,array);
+    let indices = vec![0,1,2,3,4];
+    gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, byte_size_of_array(&indices), pointer_to_array(&indices),gl::STATIC_DRAW);
+
+
+    // * Fill it with data
+    // * Return the ID of the VAO 
+    array        
 }
 
 
