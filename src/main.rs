@@ -194,6 +194,11 @@ fn main() {
         };
 
 
+        unsafe {
+            gl::BindVertexArray(my_vao);
+            gl::DrawElements(gl::TRIANGLES,3,gl::UNSIGNED_INT,std::ptr::null());
+        } 
+         
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
