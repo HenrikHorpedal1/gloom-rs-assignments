@@ -55,7 +55,6 @@ fn offset<T>(n: u32) -> *const c_void {
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // Implement me!
-
     // Also, feel free to delete comments :)
 
     // This should:
@@ -78,7 +77,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // * Configure a VAP for the data and enable it
     // void glVertexAttribPointer( unsigned int index, int size, enum type, bool normalised, size_t stride, void* pointer );
     let index = 1;
-    let dim = 2;
+    let dim = 3;
     let gl_type = gl::FLOAT;
     let normalize = gl::FALSE;
     let stride = 0;
@@ -186,10 +185,12 @@ fn main() {
         // of just using the correct path), but it only needs to be called once
 
         
-        let simple_shader = unsafe {
+        let simple_shader = unsafe{
             shader::ShaderBuilder::new()
-                .attach_file("./path/to/simple/shader.file")
+                .attach_file("./shaders/simple.frag")
+                .attach_file("./shaders/simple.vert")
                 .link()
+                .activate()
         };
         
 
