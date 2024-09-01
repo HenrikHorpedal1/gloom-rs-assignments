@@ -170,8 +170,8 @@ fn main() {
         // == // Set up your VAO around here
 
 
-        let vertex = vec![1.0,2.0,3.0];
-        let indices = vec![0,1,2];
+        let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
+        let indices = vec![0,1,2,3,4,5,6,7,8];
         let my_vao = unsafe { create_vao(&vertex, &indices) };
 
 
@@ -192,7 +192,7 @@ fn main() {
                 .link()
                 .activate()
         };
-        
+
 
 
         // Used to demonstrate keyboard handling for exercise 2.
