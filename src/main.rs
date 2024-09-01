@@ -54,57 +54,53 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
-    // Implement me!
-    // Also, feel free to delete comments :)
+    // Generate a VAO and bind it
+    let mut vao: u32 = 0;
+    gl::GenVertexArrays(1, &mut vao); 
+    gl::BindVertexArray(vao);
 
-    // This should:
-    // * Generate a VAO and bind it
-    let mut array: u32 = 0;
-    let n = 1;
-    gl::GenVertexArrays(n, &mut array); 
-    gl::BindVertexArray(array);
-
-    // * Generate a VBO and bind it
-    let mut bufferIDs: u32 = 0;
-    gl::GenBuffers(n, &mut bufferIDs);
-    gl::BindBuffer(gl::ARRAY_BUFFER,bufferIDs);
+    // Generate a VBO and bind it
+    let mut vbo: u32 = 0;
+    gl::GenBuffers(1, &mut vbo);
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
     
-    // * Fill it with data   
-    //let data = vec![2.0, 2.0, 3.0, 4.0, 5.0];
-    let size_of_data = byte_size_of_array(&vertices);
-    gl::BufferData(gl::ARRAY_BUFFER, size_of_data, pointer_to_array(&vertices), gl::STATIC_DRAW);
-
-    // * Configure a VAP for the data and enable it
-    // void glVertexAttribPointer( unsigned int index, int size, enum type, bool normalised, size_t stride, void* pointer );
-    let index = 1;
-    let dim = 3;
-    let gl_type = gl::FLOAT;
-    let normalize = gl::FALSE;
-    let stride = 0;
-    
-    gl::VertexAttribPointer(
-        index,
-        dim,
-        gl_type,
-        normalize,
-        stride,
-        std::ptr::null(),
+    // Fill VBO with vertex data
+    gl::BufferData(
+        gl::ARRAY_BUFFER,
+        (vertices.len() * std::mem::size_of::<f32>()) as isize,
+        vertices.as_ptr() as *const _,
+        gl::STATIC_DRAW,
     );
-    //void glEnableVertexAttribArray(unsigned int index);
-    gl::EnableVertexAttribArray(index);
 
-    // * Generate a IBO and bind it
-    let mut array: u32 = 0;
-    let n = 1;
-    gl::GenBuffers(n, &mut array);
-    gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER,array);
+    // Configure a VAP for the vertex data and enable it
+    gl::VertexAttribPointer(
+        0,              // Attribute index in the shader
+        3,              // Number of components per vertex (e.g., x, y, z)
+        gl::FLOAT,      // Data type
+        gl::FALSE,      // Normalization
+        3 * std::mem::size_of::<f32>() as i32, // Stride (byte offset between consecutive vertex attributes)
+        std::ptr::null() // Offset of the first component
+    );
+    gl::EnableVertexAttribArray(0); // Enable the vertex attribute at index 0
+
+    // Generate an IBO and bind it
+    let mut ibo: u32 = 0;
+    gl::GenBuffers(1, &mut ibo);
+    gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
     
-    // * Fill it with data
-    //let indices = vec![0,1,2,3,4];
-    gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, byte_size_of_array(&indices), pointer_to_array(&indices),gl::STATIC_DRAW);
+    // Fill IBO with index data
+    gl::BufferData(
+        gl::ELEMENT_ARRAY_BUFFER,
+        (indices.len() * std::mem::size_of::<u32>()) as isize,
+        indices.as_ptr() as *const _,
+        gl::STATIC_DRAW,
+    );
 
-    // * Return the ID of the VAO 
-    array        
+    // Unbind the VAO (optional)
+    //gl::BindVertexArray(0);
+
+    // Return the ID of the VAO
+    vao
 }
 
 
