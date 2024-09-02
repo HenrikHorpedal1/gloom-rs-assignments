@@ -229,7 +229,11 @@ fn main() {
         let equalateral = create_2d_triangle_vertices(TriangleType::Equilateral,(-0.8,0.1), 0.4);
         vertex_array.extend(equalateral);
 
-        let indices = (0..number_of_triangles*3).collect();
+        //let indices = (0..number_of_triangles*3).collect();
+        let indices = vec![
+            0, 1, 2,   // First triangle
+            3, 4, 5    // Second triangle
+        ];
 
         let my_vao = unsafe { create_vao(&vertex_array, &indices) };
 
