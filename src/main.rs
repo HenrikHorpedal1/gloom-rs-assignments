@@ -221,35 +221,16 @@ fn main() {
         //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
 
         let mut vertex_array: Vec<f32> = vec![];
-        let number_of_triangles = 5;
-
-        let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
-        vertex_array.extend(righ_angled);
+        let number_of_triangles = 1;
 
         //let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
         //vertex_array.extend(equalateral);
-        vertex_array.extend(vec![
-            -0.8,-0.6,0.0,
-            -0.8,-0.8,0.0,
-            -0.6,-0.6,0.0,
-            ]);
+       
 
         vertex_array.extend(vec![
-            -0.3,-0.6,0.0,
-            -0.3,-0.8,0.0,
-            -0.1,-0.6,0.0,
-            ]);
-
-        vertex_array.extend(vec![
-            0.0,-0.6,0.0,
-            0.0,-0.8,0.0,
-            0.2,-0.6,0.0,
-            ]);
-
-        vertex_array.extend(vec![
-            0.5,0.5,0.0,
-            0.2,0.2,0.0,
-            0.7,0.2,0.0,
+            0.6,-0.8,-1.2,
+            0.0,0.4,0.0,
+            -0.8,-0.2,1.2,
             ]);
         
 
@@ -356,7 +337,7 @@ fn main() {
 
             
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES,15,gl::UNSIGNED_INT,std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES,3,gl::UNSIGNED_INT,std::ptr::null());
              
 
 
