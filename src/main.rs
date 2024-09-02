@@ -235,12 +235,12 @@ fn main() {
         //    ]);
 
         vertex_array.extend(vec![
-            -0.6,  0.6, 0.0,  // Vertex 1 (Triangle 1)
-            -0.4,  0.6, 0.0,  // Vertex 2 (Triangle 1)
-            -0.4,  0.4, 0.0,  // Vertex 3 (Triangle 1)
-            -0.6,  0.6, 0.0,  // Vertex 4 (Triangle 2)
-            -0.4,  0.4, 0.0,  // Vertex 5 (Triangle 2)
-            -0.6,  0.4, 0.0   // Vertex 6 (Triangle 2)
+            -0.8,  0.8, 0.0,  // Vertex 1
+            -0.6,  0.8, 0.0,  // Vertex 2
+            -0.7,  0.6, 0.0,  // Vertex 3
+            0.4, -0.4, 0.0,   // Vertex 4
+            0.6, -0.4, 0.0,   // Vertex 5
+            0.5, -0.6, 0.0    // Vertex 6
         ]);
             //let indices = (0..number_of_triangles*3).collect();
         let indices = vec![
