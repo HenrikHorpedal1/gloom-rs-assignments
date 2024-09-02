@@ -226,15 +226,23 @@ fn main() {
         let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
         vertex_array.extend(righ_angled);
 
-        let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
-        vertex_array.extend(equalateral);
+        //let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
+        //vertex_array.extend(equalateral);
         //vertex_array.extend(vec![
         //    -0.8,-0.6,0.0,
         //    -0.8,-0.8,0.0,
         //    -0.6,-0.6,0.0,
         //    ]);
 
-        //let indices = (0..number_of_triangles*3).collect();
+        vertex_array.extend(vec![
+            -0.6,  0.6, 0.0,  // Vertex 1 (Triangle 1)
+            -0.4,  0.6, 0.0,  // Vertex 2 (Triangle 1)
+            -0.4,  0.4, 0.0,  // Vertex 3 (Triangle 1)
+            -0.6,  0.6, 0.0,  // Vertex 4 (Triangle 2)
+            -0.4,  0.4, 0.0,  // Vertex 5 (Triangle 2)
+            -0.6,  0.4, 0.0   // Vertex 6 (Triangle 2)
+        ]);
+            //let indices = (0..number_of_triangles*3).collect();
         let indices = vec![
             0, 1, 2,   // First triangle
             3, 4, 5    // Second triangle
