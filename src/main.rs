@@ -228,16 +228,13 @@ fn main() {
        
 
         vertex_array.extend(vec![
-            0.6,-0.8,-1.2,
-            0.0,0.4,0.0,
-            -0.8,-0.2,1.2,
+            -0.6,-0.6,0.0,
+            0.6,-0.6,0.0,
+            0.0,0.6,0.0,
             ]);
-        
-
-
-        
        
-        let indices = (0..number_of_triangles*3).collect();
+        //let indices = (0..number_of_triangles*3).collect();
+        let indices = vec![0,1,2];
         //let indices = vec![
         //    0, 1, 2,   // First triangle
         //    3, 4, 5,    // Second triangle
