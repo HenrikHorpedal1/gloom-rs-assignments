@@ -67,8 +67,8 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // Fill VBO with vertex data
     gl::BufferData(
         gl::ARRAY_BUFFER,
-        (vertices.len() * std::mem::size_of::<f32>()) as isize,
-        vertices.as_ptr() as *const _,
+        byte_size_of_array(&vertices),
+        pointer_to_array(&vertices),
         gl::STATIC_DRAW,
     );
 
@@ -91,8 +91,8 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // Fill IBO with index data
     gl::BufferData(
         gl::ELEMENT_ARRAY_BUFFER,
-        (indices.len() * std::mem::size_of::<u32>()) as isize,
-        indices.as_ptr() as *const _,
+        byte_size_of_array(&indices),
+        pointer_to_array(&indices),
         gl::STATIC_DRAW,
     );
 
