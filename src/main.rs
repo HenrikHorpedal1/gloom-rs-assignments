@@ -266,6 +266,8 @@ fn main() {
         let my_vao = unsafe { create_vao(&vertex_array, &indices) };
 
         println!("vertex array: {:#?}", vertex_array);
+        println!("vertex array: {:#?}", indices);
+
 
         // == // Set up your shaders here
 
@@ -354,7 +356,7 @@ fn main() {
 
             
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES,3,gl::UNSIGNED_INT,std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES,15,gl::UNSIGNED_INT,std::ptr::null());
              
 
 
