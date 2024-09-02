@@ -226,7 +226,7 @@ fn main() {
         let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
         vertex_array.extend(righ_angled);
 
-        let equalateral = create_2d_triangle_vertices(TriangleType::Equilateral,(0.5,-0.1), 0.5);
+        let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
         vertex_array.extend(equalateral);
         //vertex_array.extend(vec![
         //    -0.8,-0.6,0.0,
