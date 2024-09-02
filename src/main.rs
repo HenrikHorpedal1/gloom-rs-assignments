@@ -221,7 +221,7 @@ fn main() {
         //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
 
         let mut vertex_array: Vec<f32> = vec![];
-        let number_of_triangles = 2;
+        let number_of_triangles = 5;
 
         let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
         vertex_array.extend(righ_angled);
@@ -240,15 +240,28 @@ fn main() {
             -0.1,-0.6,0.0,
             ]);
 
+        vertex_array.extend(vec![
+            0.0,-0.6,0.0,
+            0.0,-0.8,0.0,
+            0.2,-0.6,0.0,
+            ]);
+
+        vertex_array.extend(vec![
+            0.0,-0.1,0.0,
+            0.0,-0.3,0.0,
+            0.2,-0.1,0.0,
+            ]);
+        
+
 
         
        
-            //let indices = (0..number_of_triangles*3).collect();
-        let indices = vec![
-            0, 1, 2,   // First triangle
-            3, 4, 5,    // Second triangle
-            6, 7, 8,
-        ];
+        let indices = (0..number_of_triangles*3).collect();
+        //let indices = vec![
+        //    0, 1, 2,   // First triangle
+        //    3, 4, 5,    // Second triangle
+        //    6, 7, 8,
+        //];
 
         let my_vao = unsafe { create_vao(&vertex_array, &indices) };
 
@@ -341,7 +354,7 @@ fn main() {
 
             
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES,9,gl::UNSIGNED_INT,std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES,3,gl::UNSIGNED_INT,std::ptr::null());
              
 
 
