@@ -220,7 +220,7 @@ fn main() {
         // == // Set up your VAO around here
 
 
-        let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(0.8,0.8), 0.4);
+        let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
         //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
         let indices = vec![0,1,2];
         let my_vao = unsafe { create_vao(&righ_angled, &indices) };
