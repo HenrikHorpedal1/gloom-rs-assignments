@@ -234,7 +234,7 @@ fn main() {
             ]);
        
         //let indices = (0..number_of_triangles*3).collect();
-        let indices = vec![1,0,2];
+        let indices = vec![2,0,1];
         //let indices = vec![
         //    0, 1, 2,   // First triangle
         //    3, 4, 5,    // Second triangle
