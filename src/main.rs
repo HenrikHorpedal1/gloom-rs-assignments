@@ -232,11 +232,12 @@ fn main() {
         //let indices = (0..number_of_triangles*3).collect();
         let indices = vec![
             0, 1, 2,   // First triangle
-            3, 4, 5    // Second triangle
+            //3, 4, 5    // Second triangle
         ];
 
         let my_vao = unsafe { create_vao(&vertex_array, &indices) };
 
+        println!("vertex array: {:#?}", vertex_array);
 
         // == // Set up your shaders here
 
