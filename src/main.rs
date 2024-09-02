@@ -325,7 +325,7 @@ fn main() {
 
             
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES,3,gl::UNSIGNED_INT,std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES,6,gl::UNSIGNED_INT,std::ptr::null());
              
 
 
