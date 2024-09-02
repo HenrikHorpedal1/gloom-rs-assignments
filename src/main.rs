@@ -223,25 +223,18 @@ fn main() {
         let mut vertex_array: Vec<f32> = vec![];
         let number_of_triangles = 2;
 
-        //let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
-        //vertex_array.extend(righ_angled);
+        let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
+        vertex_array.extend(righ_angled);
 
         //let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
         //vertex_array.extend(equalateral);
-        //vertex_array.extend(vec![
-        //    -0.8,-0.6,0.0,
-        //    -0.8,-0.8,0.0,
-        //    -0.6,-0.6,0.0,
-        //    ]);
-
         vertex_array.extend(vec![
-            -0.8,  0.8, 0.0,  // Vertex 1
-            -0.6,  0.8, 0.0,  // Vertex 2
-            -0.7,  0.6, 0.0,  // Vertex 3
-            0.4, -0.4, 0.0,   // Vertex 4
-            0.6, -0.4, 0.0,   // Vertex 5
-            0.5, -0.6, 0.0    // Vertex 6
-        ]);
+            -0.8,-0.6,0.0,
+            -0.8,-0.8,0.0,
+            -0.6,-0.6,0.0,
+            ]);
+
+       
             //let indices = (0..number_of_triangles*3).collect();
         let indices = vec![
             0, 1, 2,   // First triangle
