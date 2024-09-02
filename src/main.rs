@@ -218,12 +218,20 @@ fn main() {
         }
 
         // == // Set up your VAO around here
+        //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
 
+        let mut vertex_array: Vec<f32> = vec![];
+        let number_of_triangles = 2;
 
         let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(-0.8,0.8), 0.4);
-        //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
-        let indices = vec![0,1,2];
-        let my_vao = unsafe { create_vao(&righ_angled, &indices) };
+        vertex_array.extend(righ_angled);
+
+        let equalateral = create_2d_triangle_vertices(TriangleType::Equilateral,(-0.8,0.1), 0.4);
+        vertex_array.extend(equalateral);
+
+        let indices = (0..number_of_triangles*3).collect();
+
+        let my_vao = unsafe { create_vao(&vertex_array, &indices) };
 
 
         // == // Set up your shaders here
