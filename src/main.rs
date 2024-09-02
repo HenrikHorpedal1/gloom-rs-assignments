@@ -24,6 +24,60 @@ const INITIAL_SCREEN_H: u32 = 600;
 
 // == // Helper functions to make interacting with OpenGL a little bit prettier. You *WILL* need these! // == //
 
+
+enum TriangleType{
+    RightAngled,
+    Equilateral,
+    Obtuse,
+    Acute,
+}
+
+//helper function for calculating vertex coordinates of a triangle
+fn create_2d_triangle_vertices(
+    triangle_type: TriangleType,
+    top_left_corner: (f32, f32),
+    longest_edge: f32
+) -> Vec<f32> {
+    let (x, y) = top_left_corner;
+
+    match triangle_type {
+        TriangleType::RightAngled => {
+            let three:f32 = 3.0;
+            let ratio = three.sqrt() / 2.0;
+            vec![
+                x, y, 0.0,                             // Top-left corner
+                x, y - longest_edge / 2.0, 0.0,        // Bottom-left corner
+                x + longest_edge * ratio, y, 0.0       // Top-right corner
+            ]
+        }
+        TriangleType::Equilateral => {
+            let height = (longest_edge * (3.0_f32).sqrt()) / 2.0;
+            vec![
+                x, y, 0.0,                             // Top vertex
+                x + longest_edge / 2.0, y - height, 0.0,  // Bottom-right vertex
+                x - longest_edge / 2.0, y - height, 0.0   // Bottom-left vertex
+            ]
+        }
+        TriangleType::Obtuse => {
+            let height = (longest_edge * (3.0_f32).sqrt()) / 4.0; // Example height
+            vec![
+                x, y, 0.0,                             // Top-left vertex
+                x + longest_edge, y, 0.0,              // Top-right vertex
+                x + longest_edge / 2.0, y - height, 0.0 // Bottom vertex
+            ]
+        }
+        TriangleType::Acute => {
+            let height = (longest_edge * (2.0_f32).sqrt()) / 2.0;
+            vec![
+                x, y, 0.0,                             // Top vertex
+                x + longest_edge / 2.0, y - height, 0.0, // Bottom-right vertex
+                x - longest_edge / 2.0, y - height, 0.0  // Bottom-left vertex
+            ]
+        }
+    }
+}
+
+
 // Get the size of an arbitrary array of numbers measured in bytes
 // Example usage:  byte_size_of_array(my_array)
 fn byte_size_of_array<T>(val: &[T]) -> isize {
@@ -166,9 +220,10 @@ fn main() {
         // == // Set up your VAO around here
 
 
-        let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
+        let righ_angled = create_2d_triangle_vertices(TriangleType::RightAngled,(0.8,0.8), 0.4);
+        //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
         let indices = vec![0,1,2];
-        let my_vao = unsafe { create_vao(&vertex, &indices) };
+        let my_vao = unsafe { create_vao(&righ_angled, &indices) };
 
 
         // == // Set up your shaders here
