@@ -9,7 +9,7 @@ void main()
     
     float checker_size = 20.0;
 
-    if (mod(floor(x / scale) + floor(y / scale), 2.0) == 0.0)
+    if (mod(floor(x / checker_scale) + floor(y / checker_scale), 2.0) == 0.0)
     {
         color = vec4(1.0, 1.0, 1.0, 1.0); 
     }
