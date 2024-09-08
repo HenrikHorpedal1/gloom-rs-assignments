@@ -211,7 +211,7 @@ fn main() {
             -0.6,0.9,0.0,
             ]);
        
-        vertex_array.extend(translate_triangle(&mut vertex_array.clone(), Direction::Right, 0.3));
+        vertex_array.extend(translate_triangle(&mut vertex_array.clone(), Direction::Right, 0.4));
 
         let indices = (0..number_of_triangles*3).collect();
         //let indices = vec![2,1,0];
