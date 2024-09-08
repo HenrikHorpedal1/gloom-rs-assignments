@@ -4,5 +4,17 @@ out vec4 color;
 
 void main()
 {
-    color = vec4(1.0f, 0.0f, 0.0f, 1.0f); // Red color
+    float x = gl_FragCoord.x;
+    float y = gl_FragCoord.y;
+    
+    float checker_size = 20.0;
+
+    if (mod(floor(x / scale) + floor(y / scale), 2.0) == 0.0)
+    {
+        color = vec4(1.0, 1.0, 1.0, 1.0); 
+    }
+    else
+    {
+        color = vec4(0.0, 0.0, 0.0, 1.0);
+    }
 }
