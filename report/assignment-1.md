@@ -101,6 +101,25 @@ If we want to not only store 3D positions but also texture with an aditional two
 
 ## Task 2d
 
+The triangles before coloring and transformations:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/dude_unmodified.png}
+\end{figure}
+
+After:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/dude_flippa.png}
+\end{figure}
+
+In order to change the color to red i just used `1.0f, 0.0f, 0.0f, 1.0f`in the fragment shader.
+In order to flip the scene horizontally and vertically I just multiplied the x-coordinate and y-coordinate with -1.
+
+
+
 ![](images/logo.png){height=5em}
 
 
