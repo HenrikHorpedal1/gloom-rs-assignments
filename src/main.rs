@@ -56,12 +56,29 @@ enum Direction{
 }
 
 //Assumes 3D coordinates of triangles
-fn translate_triangle(triangle_vertices: &mut Vec<f32>, direction: Direction, amout: f32) -> &Vec<f32>{
+fn translate_triangle(triangle_vertices: &mut Vec<f32>, direction: Direction, amount: f32) -> &Vec<f32>{
+    let dimension_offset = 3;
     match direction{
-        Direction::Up => triangle_vertices[1] = triangle_vertices[1] + amout,
-        Direction::Down => triangle_vertices[1] = triangle_vertices[1] - amout,
-        Direction::Left => triangle_vertices[0] = triangle_vertices[0] - amout,
-        Direction::Right => triangle_vertices[0] = triangle_vertices[0] + amout,
+        Direction::Up => {
+            triangle_vertices[1] = triangle_vertices[1] + amount;
+            triangle_vertices[1 + dimension_offset] = triangle_vertices[1 + dimension_offset] + amount;
+            triangle_vertices[1 + 2*dimension_offset] = triangle_vertices[1 + 2*dimension_offset] + amount;
+
+        },
+        Direction::Down => {
+            triangle_vertices[1] = triangle_vertices[1] - amount;
+            triangle_vertices[1 + dimension_offset] = triangle_vertices[1 + dimension_offset] - amount;
+            triangle_vertices[1 + 2*dimension_offset] = triangle_vertices[1 + 2*dimension_offset] - amount;
+        },
+        Direction::Right => {
+            triangle_vertices[0] = triangle_vertices[1] + amount;
+            triangle_vertices[0 + dimension_offset] = triangle_vertices[0 + dimension_offset] + amount;
+            triangle_vertices[0 + 2*dimension_offset] = triangle_vertices[0 + 2*dimension_offset] + amount;
+        }Direction::Left => {
+            triangle_vertices[0] = triangle_vertices[0] + amount;
+            triangle_vertices[0 + dimension_offset] = triangle_vertices[0 + dimension_offset] - amount;
+            triangle_vertices[0 + 2*dimension_offset] = triangle_vertices[0 + 2*dimension_offset] - amount;
+        },
     }
     triangle_vertices 
 }
