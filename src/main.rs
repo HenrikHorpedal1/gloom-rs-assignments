@@ -22,62 +22,6 @@ use glutin::event_loop::ControlFlow;
 const INITIAL_SCREEN_W: u32 = 800;
 const INITIAL_SCREEN_H: u32 = 600;
 
-// == // Helper functions to make interacting with OpenGL a little bit prettier. You *WILL* need these! // == //
-
-
-enum TriangleType{
-    RightAngled,
-    Equilateral,
-    Obtuse,
-    Acute,
-}
-
-//helper function for calculating vertex coordinates of a triangle
-fn create_2d_triangle_vertices(
-    triangle_type: TriangleType,
-    top_left_corner: (f32, f32),
-    longest_edge: f32
-) -> Vec<f32> {
-    let (x, y) = top_left_corner;
-
-    match triangle_type {
-        TriangleType::RightAngled => {
-            let three:f32 = 3.0;
-            let ratio = three.sqrt() / 2.0;
-            vec![
-                x, y, 0.0,                             // Top-left corner
-                x, y - longest_edge / 2.0, 0.0,        // Bottom-left corner
-                x + longest_edge * ratio, y, 0.0       // Top-right corner
-            ]
-        }
-        TriangleType::Equilateral => {
-            let height = (longest_edge * (3.0_f32).sqrt()) / 2.0;
-            vec![
-                x, y, 0.0,                             // Top vertex
-                x + longest_edge / 2.0, y - height, 0.0,  // Bottom-right vertex
-                x - longest_edge / 2.0, y - height, 0.0   // Bottom-left vertex
-            ]
-        }
-        TriangleType::Obtuse => {
-            let height = (longest_edge * (3.0_f32).sqrt()) / 4.0; // Example height
-            vec![
-                x, y, 0.0,                             // Top-left vertex
-                x + longest_edge, y, 0.0,              // Top-right vertex
-                x + longest_edge / 2.0, y - height, 0.0 // Bottom vertex
-            ]
-        }
-        TriangleType::Acute => {
-            let height = (longest_edge * (2.0_f32).sqrt()) / 2.0;
-            vec![
-                x, y, 0.0,                             // Top vertex
-                x + longest_edge / 2.0, y - height, 0.0, // Bottom-right vertex
-                x - longest_edge / 2.0, y - height, 0.0  // Bottom-left vertex
-            ]
-        }
-    }
-}
-
-
 // Get the size of an arbitrary array of numbers measured in bytes
 // Example usage:  byte_size_of_array(my_array)
 fn byte_size_of_array<T>(val: &[T]) -> isize {
@@ -104,6 +48,23 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // Get a null pointer (equivalent to an offset of 0)
 // ptr::null()
+enum Direction{
+    Left,
+    Right,
+    Up,
+    Down
+}
+
+//Assumes 3D coordinates of triangles
+fn translate_triangle(triangle_vertices: &mut Vec<f32>, direction: Direction, amout: f32) -> &Vec<f32>{
+    match direction{
+        Direction::Up => triangle_vertices[1] = triangle_vertices[1] + amout,
+        Direction::Down => triangle_vertices[1] = triangle_vertices[1] - amout,
+        Direction::Left => triangle_vertices[0] = triangle_vertices[0] - amout,
+        Direction::Right => triangle_vertices[0] = triangle_vertices[0] + amout,
+    }
+    triangle_vertices 
+}
 
 
 // == // Generate your VAO here
@@ -221,7 +182,7 @@ fn main() {
         //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
 
         let mut vertex_array: Vec<f32> = vec![];
-        let number_of_triangles = 1;
+        let number_of_triangles = 2;
 
         //let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
         //vertex_array.extend(equalateral);
@@ -233,6 +194,8 @@ fn main() {
             -0.6,0.9,0.0,
             ]);
        
+        vertex_array.extend(translate_triangle(&mut vertex_array.clone(), Direction::Right, 0.3));
+
         let indices = (0..number_of_triangles*3).collect();
         //let indices = vec![2,1,0];
         //let indices = vec![
