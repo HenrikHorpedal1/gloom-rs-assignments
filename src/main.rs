@@ -204,14 +204,23 @@ fn main() {
         //let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
         //vertex_array.extend(equalateral);
        
+        let left_eye = vec![
+            -0.7,0.6,0.0,
+            -0.7,0.4,0.0,
+            -0.3,0.5,0.0,
+        ];
 
-        vertex_array.extend(vec![
-            -0.9,0.9,0.0,
-            -0.75,0.6,0.0,
-            -0.6,0.9,0.0,
-            ]);
-       
-        vertex_array.extend(translate_triangle(&mut vertex_array.clone(), Direction::Right, 0.4));
+        let right_eye = vec![
+            0.7,0.6,0.0,
+            0.3,0.5,0.0,
+            0.7,0.4,0.0,
+        ];
+
+
+        vertex_array.extend(left_eye);
+        vertex_array.extend(right_eye);
+
+        //vertex_array.extend(translate_triangle(&mut vertex_array.clone(), Direction::Right, 0.4));
 
         let indices = (0..number_of_triangles*3).collect();
         //let indices = vec![2,1,0];
