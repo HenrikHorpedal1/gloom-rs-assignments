@@ -2,7 +2,7 @@
 # This is a YAML preamble, defining pandoc meta-variables.
 # Reference: https://pandoc.org/MANUAL.html#variables
 # Change them as you see fit.
-title: TDT4195 Exercise X
+title: TDT4195 Exercise 1
 author:
 - Henrik Horpedal 
 date: \today # This is a latex command, ignored for HTML output
@@ -29,94 +29,78 @@ This is a HTML-style comment, not visible in the final PDF.
 # Heading
 
 ## Task 1c
-These are five distinct triangles:
+Five distinct triangles:
 
-![](images/task1c.png){height=5em}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/task1c.png}
+\end{figure}
 
-### Subsubheading
+## Task 2a
+This was the result:
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/task2a.png}
+\end{figure}
 
-This is a paragraph.
-This is the same paragraph.
+### What is the name of this phenomenon?
+What we see here a result of a step in the 3D graphics pipeline known as frustum clipping.
 
-This is a new paragraph, with *italic*, **bold**, and `inline code` formatting.
-It is possible to use special classes to format text: [this is a test]{.smallcaps}.
+### When does it occur?
+It occurs when an object intersects with the frustum boundries. The part of the object which sticks out from this volume is clipped out. 
 
-```rust
-//this is a code block with rust syntax highlighting
-println!("Hello, {}", 42);
-```
+### What is its purpose?
+The view frustum defines the volume of space that the camera can see. There is no point of keeping object which is outside of what the camera will see. Therefore, by removing them, it will make the scene less complex and therefore increase performance.
 
-[This](https://www.ntnu.no) is a link.
-[This][] is also a link. <!-- defined below -->
-This[^this_is_a_unique_footnote_label] is a footnote. <!-- defined below -->
-This^[Footnotes can also be written inline] is also a footnote.
+## Task 2b
+I used the following vertices to specify the triangle in this task:
 
+\begin{equation}
+v_0 = \begin{bmatrix} -0.6 \\ -0.6 \\ 0 \end{bmatrix}, \quad
+v_1 = \begin{bmatrix} 0.6 \\ -0.6 \\ 0 \end{bmatrix}, \quad
+v_2 = \begin{bmatrix} 0 \\ 0.6 \\ 0 \end{bmatrix}
+\end{equation}
 
-[This]: https://www.uio.no
-[^this_is_a_unique_footnote_label]: In footnotes you can write anything tangentially related.
+When the vertex indices are specified in acending order, `[0,1,2]`, the triangle appears. It also appears with `[2,0,1]`: 
 
-* This
-* is
-* a
-* unordered
-* list
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/task2b201.png}
+\end{figure}
 
-1. This
-1. is
-1. a
-1. ordered
-1. list
-    a. with
-    a. sub
-    a. list
+But it is not displayed when using `[2,1,0]` or `[0,2,1]`:
 
-       with multiple paragraphs
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/task2b210.png}
+\end{figure}
 
-This is still on the first page
+The reason for this is known as back-face culling. Back-faces refers to polygons where the angle between its normal-vector and the view-vector is greater than 90$^{\circ}$. The normal vector is in this case calculated based on which order the vertices of the triangles are specified in the index buffer. Therefore the triangles which are defined clockwise will be culled, and not visible.
 
-`\clearpage`{=latex}
+## Task 2c
 
-<!--
-Above is a raw LaTeX statement.
-Those are included when exporting to LaTeX or PDF, and ignored when exporting to HTML.
--->
+### 1
+The depth buffer is a two-dimensional array with the same size as the frame-buffer.
+Each element is linked to each pixel in the frame and represents the distance to the nearest primitive at that pixel. While loading the frame it is continiously updated if a primitive is closer.
+It is used to determin what surfaces are hidden by other primitives.
+If a circle was to move leftward without clearing the depth buffer I would imagine 
 
-This is on the second page
+### 2
+If there are multiple objects in front of each other and the depth buffer is updated multiple times as fragments are processed. The fragment shader can be executed several times for the same pixel.
 
-i) Roman ordered list
-i) Roman ordered list
-i) Roman ordered list
+### 3
+The two most common types of shaders are vertex shaders and fragment shaders.
+The vertex shader operates on the individual vertices of a polygon and typically to geometric transformations like transforming from 3D space to screen space.
+The fragment shader is resposible for assigning the color to a fragment and assigning a depth value. 
 
-This
-: is a definition
+### 4
+Because you can re-use the vertices. Imagine specifying a pyramid, you only need to specify the top once and not create a new vertex with the same coordinates each time. By doing this you save the number of times the vertex shader is called and you will get better performance.
 
-> this is a
-block quote
+### 5
+If we want to not only store 3D positions but also texture with an aditional two components. If we for some reason only wanted the texture we could define an offset skipping over the 3D coordinates. The offset would then be the size of datatype the 3D coordinates are defined with multiplied with three.
 
+## Task 2d
 
-This is a paragraph with _inline_ \LaTeX\ style math: $\frac{1}{2}$.
-Below is a math _block_:
-
-$$
-    \int_{a}^{b} f(x)dx
-$$
-
-
-| This | is  | a   | table |
-| ---- | --- | --- | ----- |
-| 1    | 2   | 3   | 4     |
-| 5    | 6   | 7   | 8     |
-
-: This is a table caption
-
-This is an inline image with a fixed height:
 ![](images/logo.png){height=5em}
 
-Below is a _figure_ (i.e. an image with a caption).
-It floats and may as a result move to a different page depending on the layout.
 
-![
-    Image with caption
-](images/logo.png)
-
-Enable and use the `pandoc-crossref` filter to reference figures, tables and equations.
