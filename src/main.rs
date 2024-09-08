@@ -48,55 +48,20 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // Get a null pointer (equivalent to an offset of 0)
 // ptr::null()
-enum Direction{
-    Left,
-    Right,
-    Up,
-    Down
-}
-
-//Assumes 3D coordinates of triangles
-fn translate_triangle(triangle_vertices: &mut Vec<f32>, direction: Direction, amount: f32) -> &Vec<f32>{
-    let dimension_offset = 3;
-    match direction{
-        Direction::Up => {
-            triangle_vertices[1] = triangle_vertices[1] + amount;
-            triangle_vertices[1 + dimension_offset] = triangle_vertices[1 + dimension_offset] + amount;
-            triangle_vertices[1 + 2*dimension_offset] = triangle_vertices[1 + 2*dimension_offset] + amount;
-
-        },
-        Direction::Down => {
-            triangle_vertices[1] = triangle_vertices[1] - amount;
-            triangle_vertices[1 + dimension_offset] = triangle_vertices[1 + dimension_offset] - amount;
-            triangle_vertices[1 + 2*dimension_offset] = triangle_vertices[1 + 2*dimension_offset] - amount;
-        },
-        Direction::Right => {
-            triangle_vertices[0] = triangle_vertices[0] + amount;
-            triangle_vertices[0 + dimension_offset] = triangle_vertices[0 + dimension_offset] + amount;
-            triangle_vertices[0 + 2*dimension_offset] = triangle_vertices[0 + 2*dimension_offset] + amount;
-        }Direction::Left => {
-            triangle_vertices[0] = triangle_vertices[0] + amount;
-            triangle_vertices[0 + dimension_offset] = triangle_vertices[0 + dimension_offset] - amount;
-            triangle_vertices[0 + 2*dimension_offset] = triangle_vertices[0 + 2*dimension_offset] - amount;
-        },
-    }
-    triangle_vertices 
-}
 
 
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
-    // Generate a VAO and bind it
+    // VAO 
     let mut vao: u32 = 0;
     gl::GenVertexArrays(1, &mut vao); 
     gl::BindVertexArray(vao);
 
-    // Generate a VBO and bind it
+    // VBO 
     let mut vbo: u32 = 0;
     gl::GenBuffers(1, &mut vbo);
     gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
     
-    // Fill VBO with vertex data
     gl::BufferData(
         gl::ARRAY_BUFFER,
         byte_size_of_array(&vertices),
@@ -104,23 +69,22 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
         gl::STATIC_DRAW,
     );
 
-    // Configure a VAP for the vertex data and enable it
+    // VAP
     gl::VertexAttribPointer(
-        0,              // Attribute index in the shader
-        3,              // Number of components per vertex (e.g., x, y, z)
-        gl::FLOAT,      // Data type
-        gl::FALSE,      // Normalization
-        3 * std::mem::size_of::<f32>() as i32, // Stride (byte offset between consecutive vertex attributes)
-        std::ptr::null() // Offset of the first component
+        0,           
+        3,            
+        gl::FLOAT,     
+        gl::FALSE,      
+        3 * size_of::<f32>(),
+        std::ptr::null() 
     );
-    gl::EnableVertexAttribArray(0); // Enable the vertex attribute at index 0
+    gl::EnableVertexAttribArray(0); 
 
-    // Generate an IBO and bind it
+    // IBO 
     let mut ibo: u32 = 0;
     gl::GenBuffers(1, &mut ibo);
     gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
     
-    // Fill IBO with index data
     gl::BufferData(
         gl::ELEMENT_ARRAY_BUFFER,
         byte_size_of_array(&indices),
@@ -128,10 +92,6 @@ unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
         gl::STATIC_DRAW,
     );
 
-    // Unbind the VAO (optional)
-    //gl::BindVertexArray(0);
-
-    // Return the ID of the VAO
     vao
 }
 
@@ -196,13 +156,10 @@ fn main() {
         }
 
         // == // Set up your VAO around here
-        //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
 
         let mut vertex_array: Vec<f32> = vec![];
         let number_of_triangles = 3;
 
-        //let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
-        //vertex_array.extend(equalateral);
        
         let left_eye = vec![
             -0.7,0.6,0.0,
@@ -222,22 +179,10 @@ fn main() {
             0.3,-0.3,0.0
         ];
 
-            
-
-        vertex_array.extend(left_eye);
         vertex_array.extend(right_eye);
         vertex_array.extend(mouth);
 
-        //vertex_array.extend(translate_triangle(&mut vertex_array.clone(), Direction::Right, 0.4));
-
         let indices = (0..number_of_triangles*3).collect();
-        //let indices = vec![2,1,0];
-        //let indices = vec![
-        //    0, 1, 2,   // First triangle
-        //    3, 4, 5,    // Second triangle
-        //    6, 7, 8,
-        //];
-
         let my_vao = unsafe { create_vao(&vertex_array, &indices) };
 
         println!("vertex array: {:#?}", vertex_array);
@@ -328,13 +273,8 @@ fn main() {
 
 
                 // == // Issue the necessary gl:: commands to draw your scene here
-
-            
                 gl::BindVertexArray(my_vao);
                 gl::DrawElements(gl::TRIANGLES,9,gl::UNSIGNED_INT,std::ptr::null());
-             
-
-
             }
 
             // Display the new color buffer on the display
