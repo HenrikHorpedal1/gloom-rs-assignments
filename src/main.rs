@@ -180,8 +180,10 @@ fn main() {
         ];
 
         vertex_array.extend(right_eye);
+        vertex_array.extend(left_eye);
         vertex_array.extend(mouth);
 
+        
         let indices = (0..number_of_triangles*3).collect();
         let my_vao = unsafe { create_vao(&vertex_array, &indices) };
 
