@@ -199,7 +199,7 @@ fn main() {
         //let vertex = vec![-0.6,-0.6,0.0,0.6,-0.6,0.0,0.0,0.6,0.0];
 
         let mut vertex_array: Vec<f32> = vec![];
-        let number_of_triangles = 2;
+        let number_of_triangles: i32 = 2;
 
         //let equalateral = create_2d_triangle_vertices(TriangleType::Obtuse,(0.5,-0.1), 0.5);
         //vertex_array.extend(equalateral);
