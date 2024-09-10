@@ -11,8 +11,8 @@ extern crate nalgebra_glm as glm;
 use std::{ mem, ptr, os::raw::c_void };
 use std::thread;
 use std::sync::{Mutex, Arc, RwLock};
-
 mod shader;
+
 mod util;
 
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
@@ -21,8 +21,6 @@ use glutin::event_loop::ControlFlow;
 // initial window size
 const INITIAL_SCREEN_W: u32 = 800;
 const INITIAL_SCREEN_H: u32 = 600;
-
-// == // Helper functions to make interacting with OpenGL a little bit prettier. You *WILL* need these! // == //
 
 // Get the size of an arbitrary array of numbers measured in bytes
 // Example usage:  byte_size_of_array(my_array)
@@ -54,20 +52,47 @@ fn offset<T>(n: u32) -> *const c_void {
 
 // == // Generate your VAO here
 unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
-    // Implement me!
+    // VAO 
+    let mut vao: u32 = 0;
+    gl::GenVertexArrays(1, &mut vao); 
+    gl::BindVertexArray(vao);
 
-    // Also, feel free to delete comments :)
+    // VBO 
+    let mut vbo: u32 = 0;
+    gl::GenBuffers(1, &mut vbo);
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+    
+    gl::BufferData(
+        gl::ARRAY_BUFFER,
+        byte_size_of_array(&vertices),
+        pointer_to_array(&vertices),
+        gl::STATIC_DRAW,
+    );
 
-    // This should:
-    // * Generate a VAO and bind it
-    // * Generate a VBO and bind it
-    // * Fill it with data
-    // * Configure a VAP for the data and enable it
-    // * Generate a IBO and bind it
-    // * Fill it with data
-    // * Return the ID of the VAO
+    // VAP
+    gl::VertexAttribPointer(
+        0,           
+        3,            
+        gl::FLOAT,     
+        gl::FALSE,      
+        3 * size_of::<f32>(),
+        std::ptr::null() 
+    );
+    gl::EnableVertexAttribArray(0); 
 
-    0
+    // IBO 
+    let mut ibo: u32 = 0;
+    gl::GenBuffers(1, &mut ibo);
+    gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
+    
+    gl::BufferData(
+        gl::ELEMENT_ARRAY_BUFFER,
+        byte_size_of_array(&indices),
+        pointer_to_array(&indices),
+        gl::STATIC_DRAW,
+    );
+
+    vao
 }
 
 
@@ -132,7 +157,38 @@ fn main() {
 
         // == // Set up your VAO around here
 
-        let my_vao = unsafe { 1337 };
+        let mut vertex_array: Vec<f32> = vec![];
+        let number_of_triangles = 3;
+
+       
+        let left_eye = vec![
+            -0.7,0.6,0.0,
+            -0.7,0.4,0.0,
+            -0.3,0.5,0.0,
+        ];
+
+        let right_eye = vec![
+            0.7,0.6,0.0,
+            0.45,0.5,0.0,
+            0.7,0.4,0.0,
+        ];
+
+        let mouth = vec![
+            -0.3,-0.3,0.0,
+            0.0,-0.7,0.0,
+            0.3,-0.3,0.0
+        ];
+
+        vertex_array.extend(right_eye);
+        vertex_array.extend(left_eye);
+        vertex_array.extend(mouth);
+
+        
+        let indices = (0..number_of_triangles*3).collect();
+        let my_vao = unsafe { create_vao(&vertex_array, &indices) };
+
+        println!("vertex array: {:#?}", vertex_array);
+        println!("vertex array: {:#?}", indices);
 
 
         // == // Set up your shaders here
@@ -144,14 +200,16 @@ fn main() {
         // This snippet is not enough to do the exercise, and will need to be modified (outside
         // of just using the correct path), but it only needs to be called once
 
-        /*
-        let simple_shader = unsafe {
+        
+        let simple_shader = unsafe{
             shader::ShaderBuilder::new()
-                .attach_file("./path/to/simple/shader.file")
+                .attach_file("./shaders/simple.frag")
+                .attach_file("./shaders/simple.vert")
                 .link()
+                .activate()
         };
-        */
 
+         
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
@@ -217,9 +275,8 @@ fn main() {
 
 
                 // == // Issue the necessary gl:: commands to draw your scene here
-
-
-
+                gl::BindVertexArray(my_vao);
+                gl::DrawElements(gl::TRIANGLES,9,gl::UNSIGNED_INT,std::ptr::null());
             }
 
             // Display the new color buffer on the display
