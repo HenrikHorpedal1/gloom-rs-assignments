@@ -51,7 +51,7 @@ fn offset<T>(n: u32) -> *const c_void {
 
 
 // == // Generate your VAO here
-unsafe fn create_vao(vertices: &Vec<f32>, indices: &Vec<u32>) -> u32 {
+unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // VAO 
     let mut vao: u32 = 0;
     gl::GenVertexArrays(1, &mut vao); 
