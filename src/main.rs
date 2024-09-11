@@ -186,7 +186,7 @@ fn main() {
         let left_eye_color: Vec<f32> = vec![1.0, 0.0, 0.0, 1.0]
             .into_iter()
             .cycle()
-            .take(left_eye.len() * 4) // 4 elements per eye, repeated for each eye
+            .take(left_eye.len() / 3 * 4) // 4 elements per eye, repeated for each eye
             .collect();
 
         let right_eye = vec![
@@ -197,7 +197,7 @@ fn main() {
         let right_eye_color: Vec<f32> = vec![0.0, 0.0, 1.0, 1.0]
             .into_iter()
             .cycle()
-            .take(left_eye.len() * 4) // 4 elements per eye, repeated for each eye
+            .take(left_eye.len() / 3 * 4) // 4 elements per eye, repeated for each eye
             .collect();
 
         let mouth = vec![
@@ -208,7 +208,7 @@ fn main() {
         let mouth_color: Vec<f32> = vec![0.0, 1.0, 0.0, 1.0]
             .into_iter()
             .cycle()
-            .take(left_eye.len() * 4) // 4 elements per eye, repeated for each eye
+            .take(left_eye.len() / 3 * 4) // 4 elements per eye, repeated for each eye
             .collect();
 
         vertex_array.extend(right_eye);
