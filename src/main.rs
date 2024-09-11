@@ -97,6 +97,23 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
     );
     gl::EnableVertexAttribArray(1);
 
+    // Now rotate the colors
+    let chunks: Vec<_> = colors.chunks(12).collect();
+    let rotated_colors: Vec<f32> = chunks.iter()
+        .cycle()
+        .skip(1) // Rotate by 1
+        .take(chunks.len())
+        .flat_map(|chunk| chunk.iter()) // Flatten the chunks back into a single vector
+        .copied()
+        .collect();
+
+    gl::BufferSubData(
+            gl::ARRAY_BUFFER,                 // Target buffer
+            0,                                // Offset, start at the beginning of the buffer
+            byte_size_of_array(&rotated_colors), // Size of the data to update
+            pointer_to_array(&rotated_colors),   // Pointer to the rotated color data
+        );
+
     // IBO 
     let mut ibo: u32 = 0;
     gl::GenBuffers(1, &mut ibo);
