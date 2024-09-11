@@ -1,9 +1,10 @@
 #version 430 core
 
-out vec4 color;
+in vec4 vertexColor;  // Input variable from the vertex shader
+
+out vec4 FragColor;  // Output color of the fragment
 
 void main()
 {
-    color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    FragColor = vertexColor;  // Use the interpolated vertex color
 }
-
