@@ -98,21 +98,51 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
     gl::EnableVertexAttribArray(1);
 
     // Now rotate the colors
-    let chunks: Vec<_> = colors.chunks(12).collect();
-    let rotated_colors: Vec<f32> = chunks.iter()
-        .cycle()
-        .skip(1) // Rotate by 1
-        .take(chunks.len())
-        .flat_map(|chunk| chunk.iter()) // Flatten the chunks back into a single vector
-        .copied()
+    //let chunks: Vec<_> = colors.chunks(12).collect();
+    //let rotated_colors: Vec<f32> = chunks.iter()
+    //    .cycle()
+    //    .skip(1) // Rotate by 1
+    //    .take(chunks.len())
+    //    .flat_map(|chunk| chunk.iter()) // Flatten the chunks back into a single vector
+    //    .copied()
+    //    .collect();
+
+    //gl::BufferSubData(
+    //        gl::ARRAY_BUFFER,                 // Target buffer
+    //        0,                                // Offset, start at the beginning of the buffer
+    //        byte_size_of_array(&rotated_colors), // Size of the data to update
+    //        pointer_to_array(&rotated_colors),   // Pointer to the rotated color data
+    //    );
+
+    // Now rotate the z-values of the vertices
+    let vertex_chunks: Vec<_> = vertices.chunks(9).collect();
+
+    let swapped_z_vertices: Vec<f32> = vertex_chunks.iter()
+        .enumerate()
+        .flat_map(|(i, chunk)| {
+            let mut new_chunk = chunk.to_vec();
+            // Swap the Z-coordinates with the next triangle in sequence
+            if i == 0 {
+                new_chunk[2] = vertex_chunks[2][2]; // Swap z1 with z of the last triangle
+                new_chunk[5] = vertex_chunks[2][5]; // Swap z2
+                new_chunk[8] = vertex_chunks[2][8]; // Swap z3
+            } else {
+                new_chunk[2] = vertex_chunks[i - 1][2]; // Swap z1 with z of the previous triangle
+                new_chunk[5] = vertex_chunks[i - 1][5]; // Swap z2
+                new_chunk[8] = vertex_chunks[i - 1][8]; // Swap z3
+            }
+            new_chunk
+        })
         .collect();
 
     gl::BufferSubData(
-            gl::ARRAY_BUFFER,                 // Target buffer
-            0,                                // Offset, start at the beginning of the buffer
-            byte_size_of_array(&rotated_colors), // Size of the data to update
-            pointer_to_array(&rotated_colors),   // Pointer to the rotated color data
-        );
+        gl::ARRAY_BUFFER,                 // Target buffer
+        0,                                // Offset, start at the beginning of the buffer
+        byte_size_of_array(&swapped_z_vertices), // Size of the data to update
+        pointer_to_array(&swapped_z_vertices),   // Pointer to the modified vertex data
+    );
+
+    
 
     // IBO 
     let mut ibo: u32 = 0;
