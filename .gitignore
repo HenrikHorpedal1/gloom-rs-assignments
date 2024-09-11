@@ -1,6 +1,10 @@
 /target
 /.vscode
-*.pdf
 *.html
 *.png
 source.zip
+
+*.aux
+*.fbd_latexmk
+*.log
+*.fls
