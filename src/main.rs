@@ -177,48 +177,53 @@ fn main() {
         let mut color_array: Vec<f32> = vec![];
         let number_of_triangles = 3;
 
-       
         let left_eye = vec![
-            -0.7,0.6,0.0,
-            -0.7,0.4,0.0,
-            -0.3,0.5,0.0,
+            -0.7, 0.6, 0.0,
+            -0.7, 0.4, 0.0,
+            -0.3, 0.5, 0.0,
         ];
-        let left_eye_color: Vec<f32> = vec![1.0, 0.0, 0.0, 1.0]
-            .into_iter()
-            .cycle()
-            .take(left_eye.len() / 3 * 4) // 4 elements per eye, repeated for each eye
-            .collect();
+
+        let left_eye_color: Vec<f32> = vec![
+            1.0, 0.0, 0.0, 1.0,  // Red
+            0.0, 1.0, 0.0, 1.0,  // Green
+            0.0, 0.0, 1.0, 1.0,  // Blue
+        ];
 
         let right_eye = vec![
-            0.7,0.6,0.0,
-            0.45,0.5,0.0,
-            0.7,0.4,0.0,
+            0.7, 0.6, 0.0,
+            0.45, 0.5, 0.0,
+            0.7, 0.4, 0.0,
         ];
-        let right_eye_color: Vec<f32> = vec![0.0, 0.0, 1.0, 1.0]
-            .into_iter()
-            .cycle()
-            .take(left_eye.len() / 3 * 4) // 4 elements per eye, repeated for each eye
-            .collect();
+
+        let right_eye_color: Vec<f32> = vec![
+            1.0, 1.0, 0.0, 1.0,  // Yellow
+            1.0, 0.0, 1.0, 1.0,  // Magenta
+            0.0, 1.0, 1.0, 1.0,  // Cyan
+        ];
 
         let mouth = vec![
-            -0.3,-0.3,0.0,
-            0.0,-0.7,0.0,
-            0.3,-0.3,0.0
+            -0.3, -0.3, 0.0,
+            0.0, -0.7, 0.0,
+            0.3, -0.3, 0.0,
         ];
-        let mouth_color: Vec<f32> = vec![0.0, 1.0, 0.0, 1.0]
-            .into_iter()
-            .cycle()
-            .take(left_eye.len() / 3 * 4) // 4 elements per eye, repeated for each eye
-            .collect();
 
-        vertex_array.extend(right_eye);
+        let mouth_color: Vec<f32> = vec![
+            1.0, 0.5, 0.0, 1.0,  // Orange
+            0.5, 0.5, 0.5, 1.0,  // Gray
+            0.0, 1.0, 0.0, 1.0,  // Green
+        ];
+
+
+        let mut vertex_array: Vec<f32> = vec![];
+        let mut color_array: Vec<f32> = vec![];
+
         vertex_array.extend(left_eye);
+        vertex_array.extend(right_eye);
         vertex_array.extend(mouth);
 
-        color_array.extend(right_eye_color);
         color_array.extend(left_eye_color);
-        color_array.extend(mouth_color);
-        
+        color_array.extend(right_eye_color);
+        color_array.extend(mouth_color);       
         let indices = (0..number_of_triangles*3).collect();
         let my_vao = unsafe { create_vao(&vertex_array,&color_array, &indices) };
 
