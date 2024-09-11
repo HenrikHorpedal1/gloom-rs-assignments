@@ -57,19 +57,18 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
     gl::GenVertexArrays(1, &mut vao); 
     gl::BindVertexArray(vao);
 
-    // VBO 
-    let mut vbo: u32 = 0;
-    gl::GenBuffers(1, &mut vbo);
-    gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-    
+    // VBOs
+    let mut vbos: Vec<u32> = vec![0; 2]; 
+    gl::GenBuffers(2, vbos.as_mut_ptr());
+
+    // Position
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbos[0]);
     gl::BufferData(
         gl::ARRAY_BUFFER,
         byte_size_of_array(&vertices),
         pointer_to_array(&vertices),
         gl::STATIC_DRAW,
     );
-
-    // VAP
     gl::VertexAttribPointer(
         0,           
         3,            
@@ -79,6 +78,24 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
         std::ptr::null() 
     );
     gl::EnableVertexAttribArray(0); 
+
+    // Colors
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbos[1]);
+    gl::BufferData(
+        gl::ARRAY_BUFFER,
+        byte_size_of_array(&colors),
+        pointer_to_array(&colors),
+        gl::STATIC_DRAW,
+    );
+    gl::VertexAttribPointer(
+        1,
+        4,
+        gl::FLOAT,
+        gl::FALSE,
+        4 * size_of::<f32>(),
+        std::ptr::null(),
+    );
+    gl::EnableVertexAttribArray(1);
 
     // IBO 
     let mut ibo: u32 = 0;
@@ -94,7 +111,6 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
 
     vao
 }
-
 
 fn main() {
     // Set up the necessary objects to deal with windows and event handling
@@ -158,6 +174,7 @@ fn main() {
         // == // Set up your VAO around here
 
         let mut vertex_array: Vec<f32> = vec![];
+        let mut color_array: Vec<f32> = vec![];
         let number_of_triangles = 3;
 
        
@@ -166,26 +183,44 @@ fn main() {
             -0.7,0.4,0.0,
             -0.3,0.5,0.0,
         ];
+        let left_eye_color: Vec<f32> = vec![1.0, 0.0, 0.0, 1.0]
+            .into_iter()
+            .cycle()
+            .take(left_eye.len() * 4) // 4 elements per eye, repeated for each eye
+            .collect();
 
         let right_eye = vec![
             0.7,0.6,0.0,
             0.45,0.5,0.0,
             0.7,0.4,0.0,
         ];
+        let right_eye_color: Vec<f32> = vec![0.0, 0.0, 1.0, 1.0]
+            .into_iter()
+            .cycle()
+            .take(left_eye.len() * 4) // 4 elements per eye, repeated for each eye
+            .collect();
 
         let mouth = vec![
             -0.3,-0.3,0.0,
             0.0,-0.7,0.0,
             0.3,-0.3,0.0
         ];
+        let mouth_color: Vec<f32> = vec![0.0, 1.0, 0.0, 1.0]
+            .into_iter()
+            .cycle()
+            .take(left_eye.len() * 4) // 4 elements per eye, repeated for each eye
+            .collect();
 
         vertex_array.extend(right_eye);
         vertex_array.extend(left_eye);
         vertex_array.extend(mouth);
 
+        color_array.extend(right_eye_color);
+        color_array.extend(left_eye_color);
+        color_array.extend(mouth_color);
         
         let indices = (0..number_of_triangles*3).collect();
-        let my_vao = unsafe { create_vao(&vertex_array, &indices) };
+        let my_vao = unsafe { create_vao(&vertex_array,&color_array, &indices) };
 
         println!("vertex array: {:#?}", vertex_array);
         println!("vertex array: {:#?}", indices);
