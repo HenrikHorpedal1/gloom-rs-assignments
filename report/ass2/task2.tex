@@ -7,12 +7,22 @@
 \end{figure}
 
 \subsection{b)}
-\begin{figure}[h!]
+\subsubsection{i)}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{pictures/task 2b.png}
 \end{figure}
 You can see that the triangle closest dominates in the area where all three triangles overlap. My guess is that the blended colors are calculated as an average sequentially as triangles are loaded, causing the first two colors to contribute 25\% while the last contributes by 50\% to the final color.
 If we study the result from the previous task, there is actually an optical illusion. The blended color looks to be red, but if you zoom in on the only that color, it is clearly blue-ish!
+
+\subsubsection{ii)}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{pictures/task 2b2.png}
+\end{figure}
+As we can see, when changing the z-coordinates so that triangles are drawn front-to-back, the transparency effect is lost. It is because OpenGL blends the transparency color based on what is behind the triangle. So when the triangles are drawn front to back, OpenGL thinks that there is nothing behind the transparent color, and therefore there is nothing to show "through" the fragment. 
+
+
 
 
         
