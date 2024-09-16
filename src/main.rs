@@ -139,6 +139,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
     swapped_z_vertices.extend(right_eye);
     swapped_z_vertices.extend(mouth);
 
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbos[0]);
     gl::BufferSubData(
         gl::ARRAY_BUFFER,                 // Target buffer
         0,                                // Offset, start at the beginning of the buffer
