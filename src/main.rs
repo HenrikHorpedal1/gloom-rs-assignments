@@ -125,15 +125,15 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
     ];
 
     let right_eye = vec![
-        0.5, 0.7, 0.0,
-        -0.5, -0.3, 0.0,
-        0.5, -0.2, 0.0,
+        0.5, 0.7, -0.5,
+        -0.5, -0.3, -0.5,
+        0.5, -0.2, -0.5,
     ];
 
     let mouth = vec![
-        -0.1, 0.6, -0.5,
-        0.2, 0.0, -0.5,
-        0.5, 0.4, -0.5,
+        -0.1, 0.6, 0.0,
+        0.2, 0.0, 0.0,
+        0.5, 0.4, 0.0,
     ];
     swapped_z_vertices.extend(left_eye);
     swapped_z_vertices.extend(right_eye);
