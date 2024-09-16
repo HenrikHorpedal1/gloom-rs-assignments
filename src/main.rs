@@ -114,26 +114,30 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
     //        pointer_to_array(&rotated_colors),   // Pointer to the rotated color data
     //    );
 
-    // Now rotate the z-values of the vertices
-    let vertex_chunks: Vec<_> = vertices.chunks(9).collect();
 
-    let swapped_z_vertices: Vec<f32> = vertex_chunks.iter()
-        .enumerate()
-        .flat_map(|(i, chunk)| {
-            let mut new_chunk = chunk.to_vec();
-            // Swap the Z-coordinates with the next triangle in sequence
-            if i == 0 {
-                new_chunk[2] = vertex_chunks[2][2]; // Swap z1 with z of the last triangle
-                new_chunk[5] = vertex_chunks[2][5]; // Swap z2
-                new_chunk[8] = vertex_chunks[2][8]; // Swap z3
-            } else {
-                new_chunk[2] = vertex_chunks[i - 1][2]; // Swap z1 with z of the previous triangle
-                new_chunk[5] = vertex_chunks[i - 1][5]; // Swap z2
-                new_chunk[8] = vertex_chunks[i - 1][8]; // Swap z3
-            }
-            new_chunk
-        })
-        .collect();
+
+    // Now rotate the z-values of the vertices
+    let mut swapped_z_vertices: Vec<f32> = vec![];
+    let left_eye = vec![
+            -0.4, 0.5, -0.7,
+            -0.4, 0.1, -0.7,
+            0.3, 0.4, -0.7,
+    ];
+
+    let right_eye = vec![
+        0.5, 0.7, 0.0,
+        -0.5, -0.3, 0.0,
+        0.5, -0.2, 0.0,
+    ];
+
+    let mouth = vec![
+        -0.1, 0.6, -0.5,
+        0.2, 0.0, -0.5,
+        0.5, 0.4, -0.5,
+    ];
+    swapped_z_vertices.extend(left_eye);
+    swapped_z_vertices.extend(right_eye);
+    swapped_z_vertices.extend(mouth);
 
     gl::BufferSubData(
         gl::ARRAY_BUFFER,                 // Target buffer
@@ -141,9 +145,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
         byte_size_of_array(&swapped_z_vertices), // Size of the data to update
         pointer_to_array(&swapped_z_vertices),   // Pointer to the modified vertex data
     );
-
     
-
     // IBO 
     let mut ibo: u32 = 0;
     gl::GenBuffers(1, &mut ibo);
