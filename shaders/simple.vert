@@ -10,7 +10,7 @@ void main()
 {
     mat4 transformationmat;
 
-    transformationmat[0] = vec4(sin_value, 0.0, 0.0, 0.0);  // First column
+    transformationmat[0] = vec4(1.0, sin_value, 0.0, 0.0);  // First column
     transformationmat[1] = vec4(0.0, 1.0, 0.0, 0.0);  // Second column
     transformationmat[2] = vec4(0.0, 0.0, 1.0, 0.0);  // Third column
     transformationmat[3] = vec4(0.0, 0.0, 0.0, 1.0);  // Fourth column
