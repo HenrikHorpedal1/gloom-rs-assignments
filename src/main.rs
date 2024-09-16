@@ -296,10 +296,14 @@ fn main() {
                 .attach_file("./shaders/simple.frag")
                 .attach_file("./shaders/simple.vert")
                 .link()
-                .activate()
         };
+        unsafe{
+            simple_shader.activate();
+        }
 
-         
+        let uniform_location = unsafe {
+            simple_shader.get_uniform_location("sin_value")
+        };
 
         // Used to demonstrate keyboard handling for exercise 2.
         let mut _arbitrary_number = 0.0; // feel free to remove
@@ -356,7 +360,10 @@ fn main() {
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-
+            let sin_value = elapsed.sin();
+            unsafe {
+                gl::Uniform1f(uniform_location,sin_value);
+            }
 
             unsafe {
                 // Clear the color and depth buffers
