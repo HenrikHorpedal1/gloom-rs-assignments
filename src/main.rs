@@ -362,7 +362,7 @@ fn main() {
             // == // Please compute camera transforms here (exercise 2 & 3)
             //let projection_mat: glm::Mat4 = glm::identity();
             let translational_mat: glm::Mat4 = 
-                glm::translation(&glm::vec3(0.0, 0.0, -5.0));
+                glm::translation(&glm::vec3(0.0, 0.0, -1.0));
 
             let projection_mat: glm::Mat4 = 
                 glm::perspective(
