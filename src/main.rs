@@ -305,9 +305,13 @@ fn main() {
             simple_shader.get_uniform_location("transformationmat")
         };
 
-        // Used to demonstrate keyboard handling for exercise 2.
-        let mut _arbitrary_number = 0.0; // feel free to remove
 
+        let mut x_translation: f32 = 0.0;
+        let mut y_translation: f32 = 0.0;
+        let mut z_translation: f32 = 0.0;
+        
+        let mut horizontal_rot: f32 = 0.0;
+        let mut vertical_rot: f32 = 0.0;
 
         // The main rendering loop
         let first_frame_time = std::time::Instant::now();
@@ -336,14 +340,25 @@ fn main() {
                     match key {
                         // The `VirtualKeyCode` enum is defined here:
                         //    https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
-
-                        VirtualKeyCode::A => {
-                            _arbitrary_number += delta_time;
+                        VirtualKeyCode::W => {
+                            z_translation += delta_time; 
                         }
+                        VirtualKeyCode::S => {
+                            z_translation -= delta_time;
+                        }
+
                         VirtualKeyCode::D => {
-                            _arbitrary_number -= delta_time;
+                            x_translation += delta_time;
                         }
-
+                        VirtualKeyCode::A => {
+                            x_translation -= delta_time;
+                        }
+                        VirtualKeyCode::Space => {
+                            y_translation += delta_time;
+                        }
+                        VirtualKeyCode::LShift => {
+                            y_translation -= delta_time;
+                        }
 
                         // default handler:
                         _ => { }
@@ -361,8 +376,9 @@ fn main() {
 
             // == // Please compute camera transforms here (exercise 2 & 3)
             //let projection_mat: glm::Mat4 = glm::identity();
+            let z_offset = -1.0;
             let translational_mat: glm::Mat4 = 
-                glm::translation(&glm::vec3(0.0, 0.0, -3.0));
+                glm::translation(&glm::vec3(x_translation, y_translation, z_translation + z_offset));
 
             let projection_mat: glm::Mat4 = 
                 glm::perspective(
