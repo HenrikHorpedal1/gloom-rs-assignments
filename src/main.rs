@@ -361,10 +361,10 @@ fn main() {
                         }
 
                         VirtualKeyCode::Up => {
-                            vertical_rot += delta_time;
+                            vertical_rot -= delta_time;
                         }
                         VirtualKeyCode::Down => {
-                            vertical_rot -= delta_time;
+                            vertical_rot += delta_time;
                         }
                         VirtualKeyCode::Right => {
                             horizontal_rot += delta_time;
