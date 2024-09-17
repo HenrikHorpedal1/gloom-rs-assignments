@@ -9,7 +9,7 @@ void main()
     vec2 ndc = gl_FragCoord.xy / vec2(800.0, 600.0); // Assuming window size 800x600
 
     // Define the size of the checkerboard squares
-    float squareSize = 0.1; // Size of each square
+    float squareSize = 0.01; // Size of each square
 
     // Compute the checkerboard pattern
     bool isWhite = mod(floor(ndc.x / squareSize) + floor(ndc.y / squareSize), 2.0) > 0.0;
