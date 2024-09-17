@@ -223,8 +223,6 @@ fn main() {
 
         // == // Set up your VAO around here
 
-        let mut vertex_array: Vec<f32> = vec![];
-        let mut color_array: Vec<f32> = vec![];
         let number_of_triangles = 3;
 
         let left_eye = vec![
@@ -234,9 +232,9 @@ fn main() {
         ];
 
         let left_eye_color: Vec<f32> = vec![
-            1.0, 0.0, 0.0, 0.5,  // Red
-            1.0, 0.0, 0.0, 0.5,  // Red
-            1.0, 0.0, 0.0, 0.5,  // Red
+            1.0, 0.0, 0.0, 0.5, // Vertex 1: Red
+            0.0, 1.0, 0.0, 0.5, // Vertex 2: Green
+            0.0, 0.0, 1.0, 0.5, // Vertex 3: Blue
         ];
 
         let right_eye = vec![
@@ -246,9 +244,9 @@ fn main() {
         ];
 
         let right_eye_color: Vec<f32> = vec![
-            0.0, 1.0, 0.0, 0.5, // Green 
-            0.0, 1.0, 0.0, 0.5, // Green 
-            0.0, 1.0, 0.0, 0.5, // Green 
+            1.0, 1.0, 0.0, 0.5, // Vertex 1: Yellow
+            1.0, 0.5, 0.0, 0.5, // Vertex 2: Orange
+            0.5, 0.0, 1.0, 0.5, // Vertex 3: Purple
         ];
 
         let mouth = vec![
@@ -258,11 +256,10 @@ fn main() {
         ];
 
         let mouth_color: Vec<f32> = vec![
-            0.0, 0.0, 1.0, 0.5, // Blue
-            0.0, 0.0, 1.0, 0.5, // Blue
-            0.0, 0.0, 1.0, 0.5, // Blue
+            0.5, 0.5, 0.5, 0.5, // Vertex 1: Light Gray
+            0.75, 0.75, 0.75, 0.5, // Vertex 2: Medium Gray
+            0.9, 0.9, 0.9, 0.5, // Vertex 3: Dark Gray
         ];
-
 
         let mut vertex_array: Vec<f32> = vec![];
         let mut color_array: Vec<f32> = vec![];
