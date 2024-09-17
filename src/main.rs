@@ -360,6 +360,19 @@ fn main() {
                             y_translation += delta_time;
                         }
 
+                        VirtualKeyCode::Up => {
+                            vertical_rot += delta_time;
+                        }
+                        VirtualKeyCode::Down => {
+                            vertical_rot -= delta_time;
+                        }
+                        VirtualKeyCode::Right => {
+                            horizontal_rot += delta_time;
+                        }
+                        VirtualKeyCode::Left => {
+                            horizontal_rot -= delta_time;
+                        }
+
                         // default handler:
                         _ => { }
                     }
