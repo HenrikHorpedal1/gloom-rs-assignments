@@ -232,9 +232,9 @@ fn main() {
         ];
 
         let left_eye_color: Vec<f32> = vec![
-            1.0, 0.0, 0.0, 0.5, // Vertex 1: Red
-            0.0, 1.0, 0.0, 0.5, // Vertex 2: Green
-            0.0, 0.0, 1.0, 0.5, // Vertex 3: Blue
+            1.0, 0.0, 0.0, 1.0, // Vertex 1: Bright Red
+            0.0, 1.0, 0.0, 1.0, // Vertex 2: Bright Green
+            0.0, 0.0, 1.0, 1.0, // Vertex 3: Bright Blue
         ];
 
         let right_eye = vec![
@@ -244,9 +244,9 @@ fn main() {
         ];
 
         let right_eye_color: Vec<f32> = vec![
-            1.0, 1.0, 0.0, 0.5, // Vertex 1: Yellow
-            1.0, 0.5, 0.0, 0.5, // Vertex 2: Orange
-            0.5, 0.0, 1.0, 0.5, // Vertex 3: Purple
+            1.0, 1.0, 0.0, 1.0, // Vertex 1: Bright Yellow
+            1.0, 0.5, 0.0, 1.0, // Vertex 2: Bright Orange
+            0.5, 0.0, 1.0, 1.0, // Vertex 3: Bright Purple
         ];
 
         let mouth = vec![
@@ -256,9 +256,9 @@ fn main() {
         ];
 
         let mouth_color: Vec<f32> = vec![
-            0.5, 0.5, 0.5, 0.5, // Vertex 1: Light Gray
-            0.75, 0.75, 0.75, 0.5, // Vertex 2: Medium Gray
-            0.9, 0.9, 0.9, 0.5, // Vertex 3: Dark Gray
+            0.0, 0.0, 0.0, 1.0, // Vertex 1: Black
+            0.5, 0.5, 0.5, 1.0, // Vertex 2: Medium Gray
+            1.0, 1.0, 1.0, 1.0, // Vertex 3: White
         ];
 
         let mut vertex_array: Vec<f32> = vec![];
