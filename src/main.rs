@@ -333,6 +333,7 @@ fn main() {
             // Handle keyboard input
             if let Ok(keys) = pressed_keys.lock() {
                 for key in keys.iter() {
+
                     match key {
                         // The VirtualKeyCode enum is defined here:
                         //    https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
@@ -386,24 +387,38 @@ fn main() {
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-            //let projection_mat: glm::Mat4 = glm::identity();
-            let z_offset = -1.0;
-            let translational_mat: glm::Mat4 = 
-                glm::translation(&glm::vec3(x_translation, y_translation, z_translation + z_offset));
+            // Create rotation matrices
+            let vertical_rot_matrix: glm::Mat4 = glm::rotation(vertical_rot, &glm::vec3(1.0, 0.0, 0.0));
+            let horizontal_rot_matrix: glm::Mat4 = glm::rotation(horizontal_rot, &glm::vec3(0.0, 1.0, 0.0));
 
-            let vertical_rot_matrix: glm::Mat4 =
-                glm::rotation(vertical_rot, &glm::vec3(1.0,0.0,0.0));
-            let horizontal_rot_matrix: glm::Mat4 =
-                glm::rotation(horizontal_rot, &glm::vec3(0.0,1.0,0.0));
-            let projection_mat: glm::Mat4 = 
-                glm::perspective(
-                    window_aspect_ratio, //aspect ration
-                    1.3962634,// 80 degrees, vertical FOV
-                    1.0,   //near
-                    100.0,   //far
-                    );
+            // Compute the view matrix
+            let view_matrix: glm::Mat4 = horizontal_rot_matrix * vertical_rot_matrix;
+            
+            // Compute direction vectors
+            let forward_vector = glm::vec3(0.0, 0.0, -1.0);
+            let right_vector = glm::vec3(1.0, 0.0, 0.0);
+            let up_vector = glm::vec3(0.0, 1.0, 0.0);
 
-            let combined_transformation: glm::Mat4 = projection_mat  * vertical_rot_matrix * horizontal_rot_matrix * translational_mat;
+            // Transform direction vectors by the view matrix
+            let forward = view_matrix * glm::vec4(forward_vector.x, forward_vector.y, forward_vector.z, 0.0);
+            let right = view_matrix * glm::vec4(right_vector.x, right_vector.y, right_vector.z, 0.0);
+            let up = view_matrix * glm::vec4(up_vector.x, up_vector.y, up_vector.z, 0.0);
+
+            let translation_matrix = glm::translation(&(
+                glm::vec3(forward.x, forward.y, forward.z) * z_translation +
+                glm::vec3(right.x, right.y, right.z) * x_translation +
+                glm::vec3(up.x, up.y, up.z) * y_translation
+            ));
+
+            let projection_mat: glm::Mat4 = glm::perspective(
+                window_aspect_ratio, // aspect ratio
+                1.3962634,          // 80 degrees, vertical FOV
+                1.0,                // near
+                100.0,              // far
+            );
+
+            // Combine matrices
+            let combined_transformation: glm::Mat4 = projection_mat * view_matrix * translation_matrix;            unsafe {
 
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
