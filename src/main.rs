@@ -360,17 +360,22 @@ fn main() {
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-            let projection_mat: glm::Mat4 = glm::identity();
-            //let projection_mat: glm::Mat4 = 
-            //    glm::perspective(
-            //        1.0, //aspect ration
-            //        90.0,//vertical FOV
-            //        1.0,   //near
-            //        100.0,   //far
-            //        );
+            //let projection_mat: glm::Mat4 = glm::identity();
+            let translational_mat: glm::Mat4 = 
+                glm::translation(&glm::vec3(0.0, 0.0, -5.0));
+
+            let projection_mat: glm::Mat4 = 
+                glm::perspective(
+                    1.0, //aspect ration
+                    90.0,//vertical FOV
+                    1.0,   //near
+                    100.0,   //far
+                    );
+
+            let combined_transformation: glm::Mat4 = translational_mat * projection_mat;
 
             unsafe {
-                gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, projection_mat.as_ptr());
+                gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
             }
 
             unsafe {
