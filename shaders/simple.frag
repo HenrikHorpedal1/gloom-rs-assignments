@@ -1,10 +1,26 @@
 #version 430 core
 
-in vec4 vertexColor;  // Input variable from the vertex shader
+// Input from the vertex shader
+in vec4 vertexColor; // Interpolated color from the vertex shader
 
-out vec4 FragColor;  // Output color of the fragment
+// Output color of the fragment
+out vec4 FragColor;
 
 void main()
 {
-    FragColor = vertexColor;  // Use the interpolated vertex color
+    // Compute barycentric coordinates
+    // Assuming the triangle vertices are at positions (0,0), (1,0), (0,1)
+    vec2 p = gl_FragCoord.xy / vec2(800.0, 600.0); // Normalize coordinates (adjust for your viewport)
+    vec2 barycentric = vec2(p.x + p.y, p.y);
+
+    // Define border thresholds
+    float borderThreshold = 0.05; // Adjust the value to change border sharpness
+
+    // Create sharp color borders
+    if (barycentric.x > 1.0 - borderThreshold || barycentric.y > 1.0 - borderThreshold) {
+        FragColor = vec4(1.0, 1.0, 1.0, 1.0); // White border color
+    } else {
+        FragColor = vertexColor; // Original color
+    }
 }
+
