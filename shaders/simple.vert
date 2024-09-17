@@ -3,7 +3,7 @@
 layout (location = 0) in vec3 aPos;    // Position attribute (location = 0)
 layout (location = 1) in vec4 aColor;  // Color attribute (location = 1)
 
-out vec4 vertexColor;  // Output variable to pass color to fragment shader
+out noperspective vec4 vertexColor;  // Output variable to pass color to fragment shader
 
 uniform mat4 transformationmat;
 void main()
