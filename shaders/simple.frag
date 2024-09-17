@@ -1,5 +1,3 @@
-how to modify this to demonstrate smooth and noperspective:
-
 #version 430 core
 
 in vec4 vertexColor;  // Input variable from the vertex shader
