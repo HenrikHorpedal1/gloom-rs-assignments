@@ -362,7 +362,7 @@ fn main() {
             // == // Please compute camera transforms here (exercise 2 & 3)
             //let projection_mat: glm::Mat4 = glm::identity();
             let translational_mat: glm::Mat4 = 
-                glm::translation(&glm::vec3(0.0, 0.0, -1.0));
+                glm::translation(&glm::vec3(0.0, 0.0, -6.0));
 
             let projection_mat: glm::Mat4 = 
                 glm::perspective(
@@ -372,7 +372,7 @@ fn main() {
                     100.0,   //far
                     );
 
-            let combined_transformation: glm::Mat4 = translational_mat * projection_mat;
+            let combined_transformation: glm::Mat4 = projection_mat * translational_mat;
 
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
