@@ -423,6 +423,7 @@ fn main() {
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
             }
+            }
 
             unsafe {
                 // Clear the color and depth buffers
