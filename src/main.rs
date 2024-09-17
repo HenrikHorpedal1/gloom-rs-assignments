@@ -302,7 +302,7 @@ fn main() {
         }
 
         let uniform_location = unsafe {
-            simple_shader.get_uniform_location("sin_value")
+            simple_shader.get_uniform_location("transformationmat")
         };
 
         // Used to demonstrate keyboard handling for exercise 2.
@@ -360,9 +360,9 @@ fn main() {
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-            let sin_value = elapsed.sin();
+            let transformation_mat: glm::Mat4 = glm::identity();
             unsafe {
-                gl::Uniform1f(uniform_location,sin_value);
+                gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, transformation_mat.as_ptr());
             }
 
             unsafe {
