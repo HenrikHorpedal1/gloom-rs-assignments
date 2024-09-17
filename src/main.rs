@@ -366,7 +366,7 @@ fn main() {
 
             let projection_mat: glm::Mat4 = 
                 glm::perspective(
-                    800.0 / 600.0, //aspect ration
+                    window_aspect_ratio, //aspect ration
                     1.3962634,// 80 degrees, vertical FOV
                     1.0,   //near
                     100.0,   //far
