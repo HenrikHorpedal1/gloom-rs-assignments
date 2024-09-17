@@ -360,13 +360,14 @@ fn main() {
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-            let projection_mat: glm::Mat4 = 
-                glm::perspective(
-                    1.0, //aspect ration
-                    90.0,//vertical FOV
-                    1.0,   //near
-                    100.0,   //far
-                    );
+            let projection_mat: glm::Mat4 = glm::identity();
+            //let projection_mat: glm::Mat4 = 
+            //    glm::perspective(
+            //        1.0, //aspect ration
+            //        90.0,//vertical FOV
+            //        1.0,   //near
+            //        100.0,   //far
+            //        );
 
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, projection_mat.as_ptr());
