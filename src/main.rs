@@ -393,6 +393,10 @@ fn main() {
             let translational_mat: glm::Mat4 = 
                 glm::translation(&glm::vec3(x_translation, y_translation, z_translation + z_offset));
 
+            let vertical_rot_matrix: glm::Mat4 =
+                glm::rotation(vertical_rot, &glm::vec3(1.0,0.0,0.0));
+            let horizontal_rot_matrix: glm::Mat4 =
+                glm::rotation(horizontal_rot, &glm::vec3(0.0,1.0,0.0));
             let projection_mat: glm::Mat4 = 
                 glm::perspective(
                     window_aspect_ratio, //aspect ration
@@ -401,7 +405,7 @@ fn main() {
                     100.0,   //far
                     );
 
-            let combined_transformation: glm::Mat4 = projection_mat * translational_mat;
+            let combined_transformation: glm::Mat4 = projection_mat * vertical_rot_matrix * horizontal_rot_matrix * translational_mat;
 
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
