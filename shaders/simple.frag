@@ -1,27 +1,21 @@
 #version 430 core
 
-in vec4 vertexColor; // Input color with noperspective interpolation
-out vec4 FragColor;                // Output color of the fragment
+in vec4 vertexColor; // Input color from vertex shader
+out vec4 FragColor; // Output color of the fragment
 
 void main()
 {
-    // Calculate the distance from the center of the triangle to the fragment position
-    vec2 fragCoord = gl_FragCoord.xy / vec2(800.0, 600.0); // Adjust 800.0, 600.0 to your viewport size
-    vec2 triangleCenter = vec2(0.5, 0.5); // Assuming the triangle is centered, adjust if needed
+    // Get the normalized device coordinates (NDC) of the fragment
+    vec2 ndc = gl_FragCoord.xy / vec2(800.0, 600.0); // Assuming window size 800x600
 
-    // Create a border effect: set a threshold for color transition
-    float borderWidth = 0.05; // Width of the border
-    float distance = length(fragCoord - triangleCenter);
+    // Define the size of the checkerboard squares
+    float squareSize = 0.1; // Size of each square
 
-    // Set border color and inside color
-    vec4 borderColor = vec4(1.0, 1.0, 1.0, 1.0); // White border
-    vec4 insideColor = vertexColor;
+    // Compute the checkerboard pattern
+    bool isWhite = mod(floor(ndc.x / squareSize) + floor(ndc.y / squareSize), 2.0) > 0.0;
 
-    // Apply the border effect
-    if (distance > 0.5 - borderWidth) {
-        FragColor = borderColor;
-    } else {
-        FragColor = insideColor;
-    }
+    // Set the color based on the checkerboard pattern
+    vec4 color = isWhite ? vec4(1.0, 1.0, 1.0, 1.0) : vertexColor; // White or vertex color
+
+    FragColor = color; // Output the color
 }
-
