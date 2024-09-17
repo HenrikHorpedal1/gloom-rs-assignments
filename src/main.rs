@@ -302,7 +302,6 @@ fn main() {
             simple_shader.get_uniform_location("transformationmat")
         };
 
-
         let mut x_translation: f32 = 0.0;
         let mut y_translation: f32 = 0.0;
         let mut z_translation: f32 = 0.0;
@@ -335,7 +334,7 @@ fn main() {
             if let Ok(keys) = pressed_keys.lock() {
                 for key in keys.iter() {
                     match key {
-                        // The `VirtualKeyCode` enum is defined here:
+                        // The VirtualKeyCode enum is defined here:
                         //    https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
                         VirtualKeyCode::W => {
                             z_translation += delta_time; 
@@ -381,30 +380,30 @@ fn main() {
             if let Ok(mut delta) = mouse_delta.lock() {
 
                 // == // Optionally access the accumulated mouse movement between
-                // == // frames here with `delta.0` and `delta.1`
+                // == // frames here with delta.0 and delta.1
 
                 *delta = (0.0, 0.0); // reset when done
             }
 
             // == // Please compute camera transforms here (exercise 2 & 3)
-            let view_matrix = glm::look_at(
-                &glm::vec3(x_translation, y_translation, z_translation), // Camera position
-                &glm::vec3(0.0, 0.0, 0.0), // Look-at position
-                &glm::vec3(0.0, 1.0, 0.0)  // Up vector
-            );
+            //let projection_mat: glm::Mat4 = glm::identity();
+            let z_offset = -1.0;
+            let translational_mat: glm::Mat4 = 
+                glm::translation(&glm::vec3(x_translation, y_translation, z_translation + z_offset));
 
-            let rotation_x = glm::rotation(vertical_rot, &glm::vec3(1.0, 0.0, 0.0)); // Vertical rotation
-            let rotation_y = glm::rotation(horizontal_rot, &glm::vec3(0.0, 1.0, 0.0)); // Horizontal rotation
-            let rotated_view_matrix = rotation_y * rotation_x * view_matrix;
+            let vertical_rot_matrix: glm::Mat4 =
+                glm::rotation(vertical_rot, &glm::vec3(1.0,0.0,0.0));
+            let horizontal_rot_matrix: glm::Mat4 =
+                glm::rotation(horizontal_rot, &glm::vec3(0.0,1.0,0.0));
+            let projection_mat: glm::Mat4 = 
+                glm::perspective(
+                    window_aspect_ratio, //aspect ration
+                    1.3962634,// 80 degrees, vertical FOV
+                    1.0,   //near
+                    100.0,   //far
+                    );
 
-            let projection_mat = glm::perspective(
-                window_aspect_ratio,
-                1.3962634, // 80 degrees FOV
-                1.0,   // Near plane
-                100.0  // Far plane
-            );
-
-            let combined_transformation = projection_mat * rotated_view_matrix;
+            let combined_transformation: glm::Mat4 = projection_mat  * vertical_rot_matrix * horizontal_rot_matrix * translational_mat;
 
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
