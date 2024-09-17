@@ -405,7 +405,7 @@ fn main() {
                     100.0,   //far
                     );
 
-            let combined_transformation: glm::Mat4 = projection_mat * vertical_rot_matrix * horizontal_rot_matrix * translational_mat;
+            let combined_transformation: glm::Mat4 = projection_mat * translational_mat * vertical_rot_matrix * horizontal_rot_matrix;
 
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
