@@ -117,35 +117,35 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
 
 
     // Now rotate the z-values of the vertices
-    let mut swapped_z_vertices: Vec<f32> = vec![];
-    let left_eye = vec![
-            -0.4, 0.5, -0.7,
-            -0.4, 0.1, -0.7,
-            0.3, 0.4, -0.7,
-    ];
+    //let mut swapped_z_vertices: Vec<f32> = vec![];
+    //let left_eye = vec![
+    //        -0.4, 0.5, -0.7,
+    //        -0.4, 0.1, -0.7,
+    //        0.3, 0.4, -0.7,
+    //];
 
-    let right_eye = vec![
-        0.5, 0.7, -0.5,
-        -0.5, -0.3, -0.5,
-        0.5, -0.2, -0.5,
-    ];
+    //let right_eye = vec![
+    //    0.5, 0.7, -0.5,
+    //    -0.5, -0.3, -0.5,
+    //    0.5, -0.2, -0.5,
+    //];
 
-    let mouth = vec![
-        -0.1, 0.6, 0.0,
-        0.2, 0.0, 0.0,
-        0.5, 0.4, 0.0,
-    ];
-    swapped_z_vertices.extend(left_eye);
-    swapped_z_vertices.extend(right_eye);
-    swapped_z_vertices.extend(mouth);
+    //let mouth = vec![
+    //    -0.1, 0.6, 0.0,
+    //    0.2, 0.0, 0.0,
+    //    0.5, 0.4, 0.0,
+    //];
+    //swapped_z_vertices.extend(left_eye);
+    //swapped_z_vertices.extend(right_eye);
+    //swapped_z_vertices.extend(mouth);
 
-    gl::BindBuffer(gl::ARRAY_BUFFER, vbos[0]);
-    gl::BufferSubData(
-        gl::ARRAY_BUFFER,                 // Target buffer
-        0,                                // Offset, start at the beginning of the buffer
-        byte_size_of_array(&swapped_z_vertices), // Size of the data to update
-        pointer_to_array(&swapped_z_vertices),   // Pointer to the modified vertex data
-    );
+    //gl::BindBuffer(gl::ARRAY_BUFFER, vbos[0]);
+    //gl::BufferSubData(
+    //    gl::ARRAY_BUFFER,                 // Target buffer
+    //    0,                                // Offset, start at the beginning of the buffer
+    //    byte_size_of_array(&swapped_z_vertices), // Size of the data to update
+    //    pointer_to_array(&swapped_z_vertices),   // Pointer to the modified vertex data
+    //);
     
     // IBO 
     let mut ibo: u32 = 0;
