@@ -348,16 +348,16 @@ fn main() {
                         }
 
                         VirtualKeyCode::D => {
-                            x_translation += delta_time;
-                        }
-                        VirtualKeyCode::A => {
                             x_translation -= delta_time;
                         }
+                        VirtualKeyCode::A => {
+                            x_translation += delta_time;
+                        }
                         VirtualKeyCode::Space => {
-                            y_translation += delta_time;
+                            y_translation -= delta_time;
                         }
                         VirtualKeyCode::LShift => {
-                            y_translation -= delta_time;
+                            y_translation += delta_time;
                         }
 
                         // default handler:
