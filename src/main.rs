@@ -302,9 +302,11 @@ fn main() {
             simple_shader.get_uniform_location("transformationmat")
         };
 
-        let mut x_translation: f32 = 0.0;
-        let mut y_translation: f32 = 0.0;
-        let mut z_translation: f32 = 0.0;
+        let mut camera_position = glm::vec3(0.0, 0.0, 0.0);
+
+        //let mut x_translation: f32 = 0.0;
+        //let mut y_translation: f32 = 0.0;
+        //let mut z_translation: f32 = 0.0;
         
         let mut horizontal_rot: f32 = 0.0;
         let mut vertical_rot: f32 = 0.0;
@@ -330,48 +332,43 @@ fn main() {
                 }
             }
 
+            let forward = glm::vec3(
+                horizontal_rot.sin() * vertical_rot.cos(),
+                vertical_rot.sin(),
+                -horizontal_rot.cos() * vertical_rot.cos(),
+            );
+            let right = glm::normalize(&glm::cross(&forward, &glm::vec3(0.0, 1.0, 0.0)));
+            let up = glm::cross(&right, &forward);
+
             // Handle keyboard input
+            let mut movement_direction = glm::vec3(0.0, 0.0, 0.0);
+
             if let Ok(keys) = pressed_keys.lock() {
                 for key in keys.iter() {
 
                     match key {
                         // The VirtualKeyCode enum is defined here:
-                        //    https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
-                        VirtualKeyCode::W => {
-                            z_translation += delta_time; 
-                        }
-                        VirtualKeyCode::S => {
-                            z_translation -= delta_time;
-                        }
+                        // https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
 
-                        VirtualKeyCode::D => {
-                            x_translation -= delta_time;
-                        }
-                        VirtualKeyCode::A => {
-                            x_translation += delta_time;
-                        }
-                        VirtualKeyCode::Space => {
-                            y_translation -= delta_time;
-                        }
-                        VirtualKeyCode::LShift => {
-                            y_translation += delta_time;
-                        }
+                        // Translations
+                        VirtualKeyCode::W => movement_direction += forward,
+                        VirtualKeyCode::S => movement_direction -= forward,
+                        VirtualKeyCode::D => movement_direction -= right,
+                        VirtualKeyCode::A => movement_direction += right,
+                        VirtualKeyCode::Space => movement_direction -= up,
+                        VirtualKeyCode::LShift => movement_direction += up,
 
+                        // Rotations
+                        VirtualKeyCode::Right => horizontal_rot += delta_time,
+                        VirtualKeyCode::Left => horizontal_rot -= delta_time,
                         VirtualKeyCode::Up => {
                             vertical_rot -= delta_time;
                             vertical_rot = vertical_rot.clamp(-std::f32::consts::PI/3.0,std::f32::consts::PI/3.0);
-                        }
+                        },
                         VirtualKeyCode::Down => {
                             vertical_rot += delta_time;
                             vertical_rot = vertical_rot.clamp(-std::f32::consts::PI/3.0,std::f32::consts::PI/3.0);
-                        }
-                        VirtualKeyCode::Right => {
-                            horizontal_rot += delta_time;
-                        }
-                        VirtualKeyCode::Left => {
-                            horizontal_rot -= delta_time;
-                        }
-
+                        },
                         // default handler:
                         _ => { }
                     }
@@ -386,43 +383,35 @@ fn main() {
                 *delta = (0.0, 0.0); // reset when done
             }
 
-            // == // Please compute camera transforms here (exercise 2 & 3)
-            // Create rotation matrices
-            let vertical_rot_matrix: glm::Mat4 = glm::rotation(vertical_rot, &glm::vec3(1.0, 0.0, 0.0));
-            let horizontal_rot_matrix: glm::Mat4 = glm::rotation(horizontal_rot, &glm::vec3(0.0, 1.0, 0.0));
 
-            // Compute the view matrix
-            let view_matrix: glm::Mat4 = horizontal_rot_matrix * vertical_rot_matrix;
-            
-            // Compute direction vectors
-            let forward_vector = glm::vec3(0.0, 0.0, -1.0);
-            let right_vector = glm::vec3(1.0, 0.0, 0.0);
-            let up_vector = glm::vec3(0.0, 1.0, 0.0);
+            // Update camera position based on movement_direction
+            if glm::length(&movement_direction) > 0.0 {
+                movement_direction = glm::normalize(&movement_direction);
+                let speed = 5.0; // Adjust the speed as needed
+                camera_position += movement_direction * delta_time * speed;
+            }
 
-            // Transform direction vectors by the view matrix
-            let forward = view_matrix * glm::vec4(forward_vector.x, forward_vector.y, forward_vector.z, 0.0);
-            let right = view_matrix * glm::vec4(right_vector.x, right_vector.y, right_vector.z, 0.0);
-            let up = view_matrix * glm::vec4(up_vector.x, up_vector.y, up_vector.z, 0.0);
+            // Compute the view matrix using glm::look_at
+            let view_matrix = glm::look_at(
+                &camera_position,
+                &(camera_position + forward),
+                &up,
+            );
 
-            let translation_matrix = glm::translation(&(
-                glm::vec3(forward.x, forward.y, forward.z) * z_translation +
-                glm::vec3(right.x, right.y, right.z) * x_translation +
-                glm::vec3(up.x, up.y, up.z) * y_translation
-            ));
-
+            // Compute the projection matrix (unchanged)
             let projection_mat: glm::Mat4 = glm::perspective(
                 window_aspect_ratio, // aspect ratio
-                1.3962634,          // 80 degrees, vertical FOV
-                1.0,                // near
-                100.0,              // far
+                1.3962634,           // 80 degrees, vertical FOV
+                1.0,                 // near
+                100.0,               // far
             );
 
             // Combine matrices
-            let combined_transformation: glm::Mat4 = projection_mat * view_matrix * translation_matrix;            unsafe {
+            let combined_transformation = projection_mat * view_matrix;
 
+            // Pass the combined matrix to the shader
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
-            }
             }
 
             unsafe {
