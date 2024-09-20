@@ -96,57 +96,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
         std::ptr::null(),
     );
     gl::EnableVertexAttribArray(1);
-
-    // Now rotate the colors
-    //let chunks: Vec<_> = colors.chunks(12).collect();
-    //let rotated_colors: Vec<f32> = chunks.iter()
-    //    .cycle()
-    //    .skip(1) // Rotate by 1
-    //    .take(chunks.len())
-    //    .flat_map(|chunk| chunk.iter()) // Flatten the chunks back into a single vector
-    //    .copied()
-    //    .collect();
-
-    //gl::BufferSubData(
-    //        gl::ARRAY_BUFFER,                 // Target buffer
-    //        0,                                // Offset, start at the beginning of the buffer
-    //        byte_size_of_array(&rotated_colors), // Size of the data to update
-    //        pointer_to_array(&rotated_colors),   // Pointer to the rotated color data
-    //    );
-
-
-
-    // Now rotate the z-values of the vertices
-    //let mut swapped_z_vertices: Vec<f32> = vec![];
-    //let left_eye = vec![
-    //        -0.4, 0.5, -0.7,
-    //        -0.4, 0.1, -0.7,
-    //        0.3, 0.4, -0.7,
-    //];
-
-    //let right_eye = vec![
-    //    0.5, 0.7, -0.5,
-    //    -0.5, -0.3, -0.5,
-    //    0.5, -0.2, -0.5,
-    //];
-
-    //let mouth = vec![
-    //    -0.1, 0.6, 0.0,
-    //    0.2, 0.0, 0.0,
-    //    0.5, 0.4, 0.0,
-    //];
-    //swapped_z_vertices.extend(left_eye);
-    //swapped_z_vertices.extend(right_eye);
-    //swapped_z_vertices.extend(mouth);
-
-    //gl::BindBuffer(gl::ARRAY_BUFFER, vbos[0]);
-    //gl::BufferSubData(
-    //    gl::ARRAY_BUFFER,                 // Target buffer
-    //    0,                                // Offset, start at the beginning of the buffer
-    //    byte_size_of_array(&swapped_z_vertices), // Size of the data to update
-    //    pointer_to_array(&swapped_z_vertices),   // Pointer to the modified vertex data
-    //);
-    
+   
     // IBO 
     let mut ibo: u32 = 0;
     gl::GenBuffers(1, &mut ibo);
@@ -222,31 +172,28 @@ fn main() {
         }
         // == // Set up your VAO around here
 
-        // Define the cube vertices (positions)
+        // Creating a Cube 
         let vertices: Vec<f32> = vec![
             // positions          
-            -0.5, -0.5, -0.5,  // Vertex 0: Left-Bottom-Back
-             0.5, -0.5, -0.5,  // Vertex 1: Right-Bottom-Back
-             0.5,  0.5, -0.5,  // Vertex 2: Right-Top-Back
-            -0.5,  0.5, -0.5,  // Vertex 3: Left-Top-Back
-            -0.5, -0.5,  0.5,  // Vertex 4: Left-Bottom-Front
-             0.5, -0.5,  0.5,  // Vertex 5: Right-Bottom-Front
-             0.5,  0.5,  0.5,  // Vertex 6: Right-Top-Front
-            -0.5,  0.5,  0.5,  // Vertex 7: Left-Top-Front
+            -0.5, -0.5, -0.5,  
+             0.5, -0.5, -0.5,  
+             0.5,  0.5, -0.5,  
+            -0.5,  0.5, -0.5,  
+            -0.5, -0.5,  0.5,  
+             0.5, -0.5,  0.5,  
+             0.5,  0.5,  0.5,  
+            -0.5,  0.5,  0.5,  
         ];
-
-        // Define the colors for each vertex (RGBA)
         let colors: Vec<f32> = vec![
-            1.0, 0.0, 0.0, 1.0, // Vertex 0: Red
-            0.0, 1.0, 0.0, 1.0, // Vertex 1: Green
-            0.0, 0.0, 1.0, 1.0, // Vertex 2: Blue
-            1.0, 1.0, 0.0, 1.0, // Vertex 3: Yellow
-            1.0, 0.0, 1.0, 1.0, // Vertex 4: Magenta
-            0.0, 1.0, 1.0, 1.0, // Vertex 5: Cyan
-            1.0, 1.0, 1.0, 1.0, // Vertex 6: White
-            0.0, 0.0, 0.0, 1.0, // Vertex 7: Black
+            1.0, 0.0, 0.0, 1.0, 
+            0.0, 1.0, 0.0, 1.0, 
+            0.0, 0.0, 1.0, 1.0, 
+            1.0, 1.0, 0.0, 1.0, 
+            1.0, 0.0, 1.0, 1.0, 
+            0.0, 1.0, 1.0, 1.0, 
+            1.0, 1.0, 1.0, 1.0, 
+            0.0, 0.0, 0.0, 1.0, 
         ];
-
         let indices: Vec<u32> = vec![
             // Back face (Z-negative)
             0, 2, 1,
@@ -272,15 +219,6 @@ fn main() {
         let my_vao = unsafe { create_vao(&vertices, &colors, &indices) };
 
         // == // Set up your shaders here
-
-        // Basic usage of shader helper:
-        // The example code below creates a 'shader' object.
-        // It which contains the field `.program_id` and the method `.activate()`.
-        // The `.` in the path is relative to `Cargo.toml`.
-        // This snippet is not enough to do the exercise, and will need to be modified (outside
-        // of just using the correct path), but it only needs to be called once
-
-        
         let simple_shader = unsafe{
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.frag")
@@ -295,13 +233,9 @@ fn main() {
             simple_shader.get_uniform_location("transformationmat")
         };
 
-
-        let starting_position = glm::vec3(0.0, 0.0, 5.0);
+        // Camera stuff
+        let starting_position = glm::vec3(0.0, 0.0, 3.0);
         let mut camera_position = starting_position;
-        //let mut x_translation: f32 = 0.0;
-        //let mut y_translation: f32 = 0.0;
-        //let mut z_translation: f32 = 0.0;
-        
         let mut horizontal_rot: f32 = 0.0;
         let mut vertical_rot: f32 = 0.0;
 
@@ -385,33 +319,27 @@ fn main() {
                 *delta = (0.0, 0.0); // reset when done
             }
 
-
-            // Update camera position based on movement_direction
             if glm::length(&movement_direction) > 0.0 {
                 movement_direction = glm::normalize(&movement_direction);
-                let speed = 5.0; // Adjust the speed as needed
+                let speed = 3.0; 
                 camera_position += movement_direction * delta_time * speed;
             }
 
-            // Compute the view matrix using glm::look_at
             let view_matrix = glm::look_at(
                 &camera_position,
                 &(camera_position + forward),
                 &up,
             );
 
-            // Compute the projection matrix (unchanged)
             let projection_mat: glm::Mat4 = glm::perspective(
                 window_aspect_ratio, // aspect ratio
-                1.3962634,           // 80 degrees, vertical FOV
+                1.3962634,           // 80 degrees, Fov
                 1.0,                 // near
                 100.0,               // far
             );
 
-            // Combine matrices
             let combined_transformation = projection_mat * view_matrix;
 
-            // Pass the combined matrix to the shader
             unsafe {
                 gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
             }
