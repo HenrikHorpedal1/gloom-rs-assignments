@@ -354,10 +354,10 @@ fn main() {
                         // Translations
                         VirtualKeyCode::W => movement_direction += forward,
                         VirtualKeyCode::S => movement_direction -= forward,
-                        VirtualKeyCode::D => movement_direction -= right,
-                        VirtualKeyCode::A => movement_direction += right,
-                        VirtualKeyCode::Space => movement_direction -= up,
-                        VirtualKeyCode::LShift => movement_direction += up,
+                        VirtualKeyCode::D => movement_direction += right,
+                        VirtualKeyCode::A => movement_direction -= right,
+                        VirtualKeyCode::Space => movement_direction += up,
+                        VirtualKeyCode::LShift => movement_direction -= up,
 
                         // Rotations
                         VirtualKeyCode::Right => horizontal_rot += delta_time,
