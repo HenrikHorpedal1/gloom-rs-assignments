@@ -310,6 +310,12 @@ fn main() {
                     }
                 }
             }
+
+            // for finding an appropriate position and orientation:
+            println!("position: {:?}", camera_position);
+            println!("horizontal rot: {}", horizontal_rot);
+            println!("vertical rot: {}", vertical_rot);
+
             // Handle mouse movement. delta contains the x and y movement of the mouse since last frame in pixels
             if let Ok(mut delta) = mouse_delta.lock() {
 
