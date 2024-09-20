@@ -247,29 +247,26 @@ fn main() {
             0.0, 0.0, 0.0, 1.0, // Vertex 7: Black
         ];
 
-        // Define the indices for the cube (each face consists of two triangles)
         let indices: Vec<u32> = vec![
             // Back face (Z-negative)
-            0, 1, 2,
-            2, 3, 0,
+            0, 2, 1,
+            0, 3, 2,
             // Front face (Z-positive)
             4, 5, 6,
-            6, 7, 4,
+            4, 6, 7,
             // Left face (X-negative)
-            0, 3, 7,
-            7, 4, 0,
+            0, 7, 3,
+            0, 4, 7,
             // Right face (X-positive)
-            1, 5, 6,
-            6, 2, 1,
+            1, 2, 6,
+            1, 6, 5,
             // Bottom face (Y-negative)
             0, 1, 5,
-            5, 4, 0,
+            0, 5, 4,
             // Top face (Y-positive)
-            3, 2, 6,
-            6, 7, 3,
+            3, 7, 6,
+            3, 6, 2,
         ];
-
-        let number_of_triangles = indices.len() / 3;
 
         // Create the VAO with the cube data
         let my_vao = unsafe { create_vao(&vertices, &colors, &indices) };
