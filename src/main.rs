@@ -299,7 +299,7 @@ fn main() {
         };
 
 
-        let starting_position = glm::vec3(0.0, 0.0, 1.0);
+        let starting_position = glm::vec3(0.0, 0.0, 5.0);
         let mut camera_position = starting_position;
         //let mut x_translation: f32 = 0.0;
         //let mut y_translation: f32 = 0.0;
@@ -427,7 +427,7 @@ fn main() {
 
                 // == // Issue the necessary gl:: commands to draw your scene here
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES,number_of_triangles as i32,gl::UNSIGNED_INT,std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES,indices.len() as i32,gl::UNSIGNED_INT,std::ptr::null());
             }
 
             // Display the new color buffer on the display
