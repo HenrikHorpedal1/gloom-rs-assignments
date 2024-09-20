@@ -220,63 +220,59 @@ fn main() {
             println!("OpenGL\t: {}", util::get_gl_string(gl::VERSION));
             println!("GLSL\t: {}", util::get_gl_string(gl::SHADING_LANGUAGE_VERSION));
         }
-
         // == // Set up your VAO around here
 
-        let number_of_triangles = 3;
-
-        let left_eye = vec![
-            -0.4, 0.5, 0.0,
-            -0.4, 0.1, 0.0,
-            0.3, 0.4, 0.0,
+        // Define the cube vertices (positions)
+        let vertices: Vec<f32> = vec![
+            // positions          
+            -0.5, -0.5, -0.5,  // Vertex 0: Left-Bottom-Back
+             0.5, -0.5, -0.5,  // Vertex 1: Right-Bottom-Back
+             0.5,  0.5, -0.5,  // Vertex 2: Right-Top-Back
+            -0.5,  0.5, -0.5,  // Vertex 3: Left-Top-Back
+            -0.5, -0.5,  0.5,  // Vertex 4: Left-Bottom-Front
+             0.5, -0.5,  0.5,  // Vertex 5: Right-Bottom-Front
+             0.5,  0.5,  0.5,  // Vertex 6: Right-Top-Front
+            -0.5,  0.5,  0.5,  // Vertex 7: Left-Top-Front
         ];
 
-        let left_eye_color: Vec<f32> = vec![
-            1.0, 0.0, 0.0, 1.0, // Vertex 1: Bright Red
-            0.0, 1.0, 0.0, 1.0, // Vertex 2: Bright Green
-            0.0, 0.0, 1.0, 1.0, // Vertex 3: Bright Blue
+        // Define the colors for each vertex (RGBA)
+        let colors: Vec<f32> = vec![
+            1.0, 0.0, 0.0, 1.0, // Vertex 0: Red
+            0.0, 1.0, 0.0, 1.0, // Vertex 1: Green
+            0.0, 0.0, 1.0, 1.0, // Vertex 2: Blue
+            1.0, 1.0, 0.0, 1.0, // Vertex 3: Yellow
+            1.0, 0.0, 1.0, 1.0, // Vertex 4: Magenta
+            0.0, 1.0, 1.0, 1.0, // Vertex 5: Cyan
+            1.0, 1.0, 1.0, 1.0, // Vertex 6: White
+            0.0, 0.0, 0.0, 1.0, // Vertex 7: Black
         ];
 
-        let right_eye = vec![
-            0.5, 0.7, -0.5,
-            -0.5, -0.3, -0.5,
-            0.5, -0.2, -0.5,
+        // Define the indices for the cube (each face consists of two triangles)
+        let indices: Vec<u32> = vec![
+            // Back face (Z-negative)
+            0, 1, 2,
+            2, 3, 0,
+            // Front face (Z-positive)
+            4, 5, 6,
+            6, 7, 4,
+            // Left face (X-negative)
+            0, 3, 7,
+            7, 4, 0,
+            // Right face (X-positive)
+            1, 5, 6,
+            6, 2, 1,
+            // Bottom face (Y-negative)
+            0, 1, 5,
+            5, 4, 0,
+            // Top face (Y-positive)
+            3, 2, 6,
+            6, 7, 3,
         ];
 
-        let right_eye_color: Vec<f32> = vec![
-            1.0, 1.0, 0.0, 1.0, // Vertex 1: Bright Yellow
-            1.0, 0.5, 0.0, 1.0, // Vertex 2: Bright Orange
-            0.5, 0.0, 1.0, 1.0, // Vertex 3: Bright Purple
-        ];
+        let number_of_triangles = indices.len() / 3;
 
-        let mouth = vec![
-            -0.1, 0.6, -0.7,
-            0.2, 0.0, -0.7,
-            0.5, 0.4, -0.7,
-        ];
-
-        let mouth_color: Vec<f32> = vec![
-            0.0, 0.0, 0.0, 1.0, // Vertex 1: Black
-            0.5, 0.5, 0.5, 1.0, // Vertex 2: Medium Gray
-            1.0, 1.0, 1.0, 1.0, // Vertex 3: White
-        ];
-
-        let mut vertex_array: Vec<f32> = vec![];
-        let mut color_array: Vec<f32> = vec![];
-
-        vertex_array.extend(left_eye);
-        vertex_array.extend(right_eye);
-        vertex_array.extend(mouth);
-
-        color_array.extend(left_eye_color);
-        color_array.extend(right_eye_color);
-        color_array.extend(mouth_color);       
-        let indices = (0..number_of_triangles*3).collect();
-        let my_vao = unsafe { create_vao(&vertex_array,&color_array, &indices) };
-
-        println!("vertex array: {:#?}", vertex_array);
-        println!("vertex array: {:#?}", indices);
-
+        // Create the VAO with the cube data
+        let my_vao = unsafe { create_vao(&vertices, &colors, &indices) };
 
         // == // Set up your shaders here
 
@@ -431,7 +427,7 @@ fn main() {
 
                 // == // Issue the necessary gl:: commands to draw your scene here
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES,9,gl::UNSIGNED_INT,std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES,number_of_triangles as i32,gl::UNSIGNED_INT,std::ptr::null());
             }
 
             // Display the new color buffer on the display
