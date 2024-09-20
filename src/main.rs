@@ -302,8 +302,9 @@ fn main() {
             simple_shader.get_uniform_location("transformationmat")
         };
 
-        let mut camera_position = glm::vec3(0.0, 0.0, 0.0);
 
+        let starting_position = glm::vec3(0.0, 0.0, 1.0);
+        let mut camera_position = starting_position;
         //let mut x_translation: f32 = 0.0;
         //let mut y_translation: f32 = 0.0;
         //let mut z_translation: f32 = 0.0;
@@ -369,6 +370,14 @@ fn main() {
                             vertical_rot += delta_time;
                             vertical_rot = vertical_rot.clamp(-std::f32::consts::PI/3.0,std::f32::consts::PI/3.0);
                         },
+
+                        // get back to starting point
+                        VirtualKeyCode::R => {
+                            camera_position = starting_position;
+                            horizontal_rot = 0.0;
+                            vertical_rot = 0.0;
+                        }
+
                         // default handler:
                         _ => { }
                     }
