@@ -234,10 +234,15 @@ fn main() {
         };
 
         // Camera stuff
-        let starting_position = glm::vec3(0.0, 0.0, 3.0);
+        // position: [[-1.868978, 2.157958, 1.1250876]]
+        // horizontal rot: 7.160985
+        // vertical rot: -1.0471976
+        let starting_position = glm::vec3(-1.868978, 2.157958, 1.1250876);
         let mut camera_position = starting_position;
-        let mut horizontal_rot: f32 = 0.0;
-        let mut vertical_rot: f32 = 0.0;
+        let starting_horizontal_rot = 7.160985;
+        let starting_vertical_rot = -1.0471976;
+        let mut horizontal_rot: f32 = starting_horizontal_rot;
+        let mut vertical_rot: f32 = starting_vertical_rot;
 
         // The main rendering loop
         let first_frame_time = std::time::Instant::now();
@@ -301,8 +306,9 @@ fn main() {
                         // get back to starting point
                         VirtualKeyCode::R => {
                             camera_position = starting_position;
-                            horizontal_rot = 0.0;
-                            vertical_rot = 0.0;
+                            horizontal_rot = starting_horizontal_rot;
+                            vertical_rot = starting_vertical_rot;
+
                         }
 
                         // default handler:
@@ -312,9 +318,9 @@ fn main() {
             }
 
             // for finding an appropriate position and orientation:
-            println!("position: {:?}", camera_position);
-            println!("horizontal rot: {}", horizontal_rot);
-            println!("vertical rot: {}", vertical_rot);
+            // println!("position: {:?}", camera_position);
+            // println!("horizontal rot: {}", horizontal_rot);
+            // println!("vertical rot: {}", vertical_rot);
 
             // Handle mouse movement. delta contains the x and y movement of the mouse since last frame in pixels
             if let Ok(mut delta) = mouse_delta.lock() {
