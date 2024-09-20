@@ -363,11 +363,11 @@ fn main() {
                         VirtualKeyCode::Right => horizontal_rot += delta_time,
                         VirtualKeyCode::Left => horizontal_rot -= delta_time,
                         VirtualKeyCode::Up => {
-                            vertical_rot -= delta_time;
+                            vertical_rot += delta_time;
                             vertical_rot = vertical_rot.clamp(-std::f32::consts::PI/3.0,std::f32::consts::PI/3.0);
                         },
                         VirtualKeyCode::Down => {
-                            vertical_rot += delta_time;
+                            vertical_rot -= delta_time;
                             vertical_rot = vertical_rot.clamp(-std::f32::consts::PI/3.0,std::f32::consts::PI/3.0);
                         },
 
