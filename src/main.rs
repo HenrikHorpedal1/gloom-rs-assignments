@@ -215,10 +215,10 @@ fn main() {
         // position: [[-1.868978, 2.157958, 1.1250876]]
         // horizontal rot: 7.160985
         // vertical rot: -1.0471976
-        let starting_position = glm::vec3(-1.868978, 2.157958, 1.1250876);
+        let starting_position = glm::vec3(0.0, 0.0, 1.0);
         let mut camera_position = starting_position;
-        let starting_horizontal_rot = 7.160985;
-        let starting_vertical_rot = -1.0471976;
+        let starting_horizontal_rot = 0.0;
+        let starting_vertical_rot = 0.0;
         let mut horizontal_rot: f32 = starting_horizontal_rot;
         let mut vertical_rot: f32 = starting_vertical_rot;
 
