@@ -59,7 +59,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
 
     // VBOs
     let mut vbos: Vec<u32> = vec![0; 3]; 
-    gl::GenBuffers(2, vbos.as_mut_ptr());
+    gl::GenBuffers(3, vbos.as_mut_ptr());
 
     // Position
     gl::BindBuffer(gl::ARRAY_BUFFER, vbos[0]);
@@ -95,7 +95,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
         4 * size_of::<f32>(),
         std::ptr::null(),
     );
-    gl::EnableVertexAttribArray(1);
+    gl::EnableVertexAttribArray(2);
    
     // Normals
     gl::BindBuffer(gl::ARRAY_BUFFER, vbos[2]);
@@ -107,13 +107,13 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
     );
     gl::VertexAttribPointer(
         2,
-        5,
+        3,
         gl::FLOAT,
         gl::FALSE,
         3 * size_of::<f32>(),
         std::ptr::null(),
     );
-    gl::EnableVertexAttribArray(1);    
+    gl::EnableVertexAttribArray(3);    
 
 
     // IBO 
