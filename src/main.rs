@@ -311,7 +311,7 @@ fn main() {
 
             if glm::length(&movement_direction) > 0.0 {
                 movement_direction = glm::normalize(&movement_direction);
-                let speed = 3.0; 
+                let speed = 20.0; 
                 camera_position += movement_direction * delta_time * speed;
             }
 
