@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1726485687.06493 "main.tex" "main.pdf" "main" 1726485688.01218 0
+["pdflatex"] 1726857368.94943 "main.tex" "main.pdf" "main" 1726857370.21411 0
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1136768653 1524 4414a8315f39513458b80dfc63bff03a ""
@@ -35,18 +35,22 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1713093404.78977 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1713093387 8221421 7d81e2c95a0ebceaf74a0e91bc93851d ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "main.aux" 1726485687.98996 89 a3aa6ecf5e7dbbd1c5c34c52a1fdeddf "pdflatex"
-  "main.tex" 1726484811.22607 533 5e033ca1de7e55265d4661ad6954c09b ""
+  "main.aux" 1726857370.18959 108 a8bbe63104049efe48d71cf0e7df9aa5 "pdflatex"
+  "main.tex" 1726856668.86097 549 3871e20f12dcff90b519809308bb072e ""
+  "pictures/not smooth.png" 1726848204.53965 196279 5ead90e7b52bec0b5e6967d24e48519e ""
+  "pictures/smooth.png" 1726848044.4231 214616 3f2a8072cbcca26f53e618b3dce1b858 ""
   "pictures/task 1b.png" 1726052685.90798 175494 543d409f0360aab0930872adc8e279aa ""
   "pictures/task 2a.png" 1726061255.14898 141280 ce82e62d915e22ea0bfe9a8c78da7f2d ""
   "pictures/task 2b.png" 1726063047.91431 139930 7d695ac3bc75f23d82f69b42b3eb2800 ""
   "pictures/task 2b2.png" 1726478062.24599 129110 3c1b1b04ff7631938fd26aa613174500 ""
-  "task1.aux" 1726485687.5548 636 dab747ae306ccbf5b1711e9f1f8dba3d "pdflatex"
-  "task1.tex" 1726061411.88038 302 6dc189fae1452c512ba7a6d53a8fe5b0 ""
-  "task2.aux" 1726485687.98704 932 746bff4431fe82a5c47d5f85125d1a8d "pdflatex"
-  "task2.tex" 1726479485.54197 1307 8fddbc4c2b4dddb5240059011a632e92 ""
-  "task3.aux" 1726485687.98975 1325 0e3b9327e7ea6bf553162578bddd8c40 "pdflatex"
-  "task3.tex" 1726485684.34431 632 f98cdde2b9c72324d417ba5e11c27664 ""
+  "task1.aux" 1726857369.47189 636 dab747ae306ccbf5b1711e9f1f8dba3d "pdflatex"
+  "task1.tex" 1726855467.62055 399 a66afe09980d272a2eb591d82bb83cfe ""
+  "task2.aux" 1726857369.89778 932 746bff4431fe82a5c47d5f85125d1a8d "pdflatex"
+  "task2.tex" 1726855778.70127 1410 84298739db29ab8d0d44f548052e176a ""
+  "task3.aux" 1726857369.90041 1325 0e3b9327e7ea6bf553162578bddd8c40 "pdflatex"
+  "task3.tex" 1726568174.72417 632 f98cdde2b9c72324d417ba5e11c27664 ""
+  "task4.aux" 1726857370.18926 825 ec0e7fa2653554f15cc84a846f165d7d "pdflatex"
+  "task4.tex" 1726857366.93849 662 69496efe4c9fd7c2db1ef3cf2b1f7670 ""
   (generated)
   "main.aux"
   "main.log"
@@ -54,4 +58,5 @@
   "task1.aux"
   "task2.aux"
   "task3.aux"
+  "task4.aux"
   (rewritten before read)

@@ -51,14 +51,14 @@ fn offset<T>(n: u32) -> *const c_void {
 
 
 // == // Generate your VAO here
-unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>) -> u32 {
+unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>, indices: &Vec<u32>) -> u32 {
     // VAO 
     let mut vao: u32 = 0;
     gl::GenVertexArrays(1, &mut vao); 
     gl::BindVertexArray(vao);
 
     // VBOs
-    let mut vbos: Vec<u32> = vec![0; 2]; 
+    let mut vbos: Vec<u32> = vec![0; 3]; 
     gl::GenBuffers(2, vbos.as_mut_ptr());
 
     // Position
@@ -97,6 +97,25 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, indices: &Vec<u32>)
     );
     gl::EnableVertexAttribArray(1);
    
+    // Normals
+    gl::BindBuffer(gl::ARRAY_BUFFER, vbos[2]);
+    gl::BufferData(
+        gl::ARRAY_BUFFER,
+        byte_size_of_array(&normals),
+        pointer_to_array(&normals),
+        gl::STATIC_DRAW,
+    );
+    gl::VertexAttribPointer(
+        2,
+        5,
+        gl::FLOAT,
+        gl::FALSE,
+        3 * size_of::<f32>(),
+        std::ptr::null(),
+    );
+    gl::EnableVertexAttribArray(1);    
+
+
     // IBO 
     let mut ibo: u32 = 0;
     gl::GenBuffers(1, &mut ibo);
@@ -171,11 +190,11 @@ fn main() {
             println!("GLSL\t: {}", util::get_gl_string(gl::SHADING_LANGUAGE_VERSION));
         }
         // == // Set up your VAO around here
-        let lunar_terrain_path: &str = "resources/lunarsurface.obj";
+        let lunar_terrain_path: &str = "./resources/lunarsurface.obj";
         let lunar_terrain_mesh = mesh::Terrain::load(lunar_terrain_path);
 
         // Create the VAO with the cube data
-        let my_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors, &lunar_terrain_mesh.indices) };
+        let my_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors,&lunar_terrain_mesh.normals, &lunar_terrain_mesh.indices) };
 
         // == // Set up your shaders here
         let simple_shader = unsafe{
