@@ -14,9 +14,11 @@ use std::sync::{Mutex, Arc, RwLock};
 mod shader;
 mod mesh;
 mod util;
+mod scene_graph;
 
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
 use glutin::event_loop::ControlFlow;
+use scene_graph::SceneNode;
 
 // initial window size
 const INITIAL_SCREEN_W: u32 = 800;
@@ -131,6 +133,24 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
     vao
 }
 
+unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, uniform_variable: i32) { 
+    // Perform any logic needed before drawing the node 
+    
+    // Check if node is drawable, if so: set uniforms, bind VAO and draw VAO 
+    if node.index_count != -1 {
+        unsafe {
+            gl::UniformMatrix4fv(uniform_variable, 1, gl::FALSE, view_projection_matrix.as_ptr());
+            gl::BindVertexArray(node.vao_id);
+            gl::DrawElements(gl::TRIANGLES,node.index_count,gl::UNSIGNED_INT,std::ptr::null());
+        }
+
+    }
+    // Recurse
+    for &child in &node.children { 
+        draw_scene(&*child, view_projection_matrix, transformation_so_far, uniform_variable);
+    }
+}
+
 fn main() {
     // Set up the necessary objects to deal with windows and event handling
     let el = glutin::event_loop::EventLoop::new();
@@ -198,13 +218,33 @@ fn main() {
 
 
         // Create the VAO with the cube data
-        let lunar_surface_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors,&lunar_terrain_mesh.normals, &lunar_terrain_mesh.indices) };
+        let mut lunar_surface_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors,&lunar_terrain_mesh.normals, &lunar_terrain_mesh.indices) };
+
         let heli_body_vao = unsafe { create_vao(&heilcopter.body.vertices, &heilcopter.body.colors,&heilcopter.body.normals, &heilcopter.body.indices) };
         let heli_door_vao = unsafe { create_vao(&heilcopter.door.vertices, &heilcopter.door.colors,&heilcopter.door.normals, &heilcopter.door.indices) };
         let heli_main_rotor_vao = unsafe { create_vao(&heilcopter.main_rotor.vertices, &heilcopter.main_rotor.colors,&heilcopter.main_rotor.normals, &heilcopter.main_rotor.indices) };
         let heli_tail_rotor_vao = unsafe { create_vao(&heilcopter.tail_rotor.vertices, &heilcopter.tail_rotor.colors,&heilcopter.tail_rotor.normals, &heilcopter.tail_rotor.indices) };
 
-        //
+        // Scene Nodes
+        let mut terrain_root_node = SceneNode::new();
+        let mut terrain_node = SceneNode::from_vao(lunar_surface_vao, lunar_terrain_mesh.index_count);
+        terrain_root_node.add_child(&terrain_node);
+
+        let mut heli_root_node = SceneNode::new();
+        terrain_node.add_child(&heli_root_node);
+        let mut body_node = SceneNode::from_vao(heli_body_vao,heilcopter.body.index_count);
+        heli_root_node.add_child(&body_node);
+        let mut door_node = SceneNode::from_vao(heli_door_vao,heilcopter.door.index_count);
+        body_node.add_child(&door_node);
+        let mut main_rotor_node = SceneNode::from_vao(heli_main_rotor_vao,heilcopter.main_rotor.index_count);
+        body_node.add_child(&main_rotor_node);
+        let mut tail_rotor_node = SceneNode::from_vao(heli_tail_rotor_vao,heilcopter.tail_rotor.index_count);
+        body_node.add_child(&tail_rotor_node);
+
+       terrain_root_node.print(); 
+        // Inital positions
+
+        
         // == // Set up your shaders here
         let simple_shader = unsafe{
             shader::ShaderBuilder::new()
@@ -339,9 +379,6 @@ fn main() {
 
             let combined_transformation = projection_mat * view_matrix;
 
-            unsafe {
-                gl::UniformMatrix4fv(uniform_location, 1, gl::FALSE, combined_transformation.as_ptr());
-            }
 
             unsafe {
                 // Clear the color and depth buffers
@@ -350,20 +387,22 @@ fn main() {
 
 
                 // == // Issue the necessary gl:: commands to draw your scene here
-                gl::BindVertexArray(lunar_surface_vao);
-                gl::DrawElements(gl::TRIANGLES,lunar_terrain_mesh.index_count,gl::UNSIGNED_INT,std::ptr::null());
+                //gl::BindVertexArray(lunar_surface_vao);
+                //gl::DrawElements(gl::TRIANGLES,lunar_terrain_mesh.index_count,gl::UNSIGNED_INT,std::ptr::null());
 
-                gl::BindVertexArray(heli_body_vao);
-                gl::DrawElements(gl::TRIANGLES,heilcopter.body.index_count,gl::UNSIGNED_INT,std::ptr::null());                
+                //gl::BindVertexArray(heli_body_vao);
+                //gl::DrawElements(gl::TRIANGLES,heilcopter.body.index_count,gl::UNSIGNED_INT,std::ptr::null());                
 
-                gl::BindVertexArray(heli_door_vao);
-                gl::DrawElements(gl::TRIANGLES,heilcopter.door.index_count,gl::UNSIGNED_INT,std::ptr::null());            
+                //gl::BindVertexArray(heli_door_vao);
+                //gl::DrawElements(gl::TRIANGLES,heilcopter.door.index_count,gl::UNSIGNED_INT,std::ptr::null());            
 
-                gl::BindVertexArray(heli_main_rotor_vao);
-                gl::DrawElements(gl::TRIANGLES,heilcopter.main_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
+                //gl::BindVertexArray(heli_main_rotor_vao);
+                //gl::DrawElements(gl::TRIANGLES,heilcopter.main_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
 
-                gl::BindVertexArray(heli_tail_rotor_vao);
-                gl::DrawElements(gl::TRIANGLES,heilcopter.tail_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
+                //gl::BindVertexArray(heli_tail_rotor_vao);
+                //gl::DrawElements(gl::TRIANGLES,heilcopter.tail_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
+
+                draw_scene(&terrain_node,&combined_transformation,&glm::Mat4x4::identity(),uniform_location);
 
             }
             // Display the new color buffer on the display
