@@ -323,7 +323,7 @@ fn main() {
 
                 // == // Issue the necessary gl:: commands to draw your scene here
                 gl::BindVertexArray(my_vao);
-                gl::DrawElements(gl::TRIANGLES,indices.len() as i32,gl::UNSIGNED_INT,std::ptr::null());
+                gl::DrawElements(gl::TRIANGLES,lunar_terrain_mesh.index_count,gl::UNSIGNED_INT,std::ptr::null());
             }
 
             // Display the new color buffer on the display
