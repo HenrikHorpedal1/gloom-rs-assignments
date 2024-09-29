@@ -12,7 +12,8 @@ void main()
     gl_Position = transformationmat * vec4(aPos, 1.0);  // Convert vec3 to vec4 for position
     vertexColor = aColor;  // Pass the color to the fragment shader
 
-    mat3 normalMatrix = mat3(transpose(inverse(transformationmat)));
+    #mat3 normalMatrix = mat3(transpose(inverse(transformationmat)));
 
-    normal = normalize(normalMatrix * aNormal);
+    #normal = normalize(normalMatrix * aNormal);
+    normal = aNormal;
 }
