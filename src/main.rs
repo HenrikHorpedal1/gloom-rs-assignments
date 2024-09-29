@@ -12,7 +12,7 @@ use std::{ mem, ptr, os::raw::c_void };
 use std::thread;
 use std::sync::{Mutex, Arc, RwLock};
 mod shader;
-
+mod mesh;
 mod util;
 
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
@@ -171,52 +171,11 @@ fn main() {
             println!("GLSL\t: {}", util::get_gl_string(gl::SHADING_LANGUAGE_VERSION));
         }
         // == // Set up your VAO around here
-
-        // Creating a Cube 
-        let vertices: Vec<f32> = vec![
-            // positions          
-            -0.5, -0.5, -0.5,  
-             0.5, -0.5, -0.5,  
-             0.5,  0.5, -0.5,  
-            -0.5,  0.5, -0.5,  
-            -0.5, -0.5,  0.5,  
-             0.5, -0.5,  0.5,  
-             0.5,  0.5,  0.5,  
-            -0.5,  0.5,  0.5,  
-        ];
-        let colors: Vec<f32> = vec![
-            1.0, 0.0, 0.0, 1.0, 
-            0.0, 1.0, 0.0, 1.0, 
-            0.0, 0.0, 1.0, 1.0, 
-            1.0, 1.0, 0.0, 1.0, 
-            1.0, 0.0, 1.0, 1.0, 
-            0.0, 1.0, 1.0, 1.0, 
-            1.0, 1.0, 1.0, 1.0, 
-            0.0, 0.0, 0.0, 1.0, 
-        ];
-        let indices: Vec<u32> = vec![
-            // Back face (Z-negative)
-            0, 2, 1,
-            0, 3, 2,
-            // Front face (Z-positive)
-            4, 5, 6,
-            4, 6, 7,
-            // Left face (X-negative)
-            0, 7, 3,
-            0, 4, 7,
-            // Right face (X-positive)
-            1, 2, 6,
-            1, 6, 5,
-            // Bottom face (Y-negative)
-            0, 1, 5,
-            0, 5, 4,
-            // Top face (Y-positive)
-            3, 7, 6,
-            3, 6, 2,
-        ];
+        let lunar_terrain_path: &str = "resources/lunarsurface.obj";
+        let lunar_terrain_mesh = mesh::Terrain::load(lunar_terrain_path);
 
         // Create the VAO with the cube data
-        let my_vao = unsafe { create_vao(&vertices, &colors, &indices) };
+        let my_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors, &lunar_terrain_mesh.indices) };
 
         // == // Set up your shaders here
         let simple_shader = unsafe{
@@ -347,7 +306,7 @@ fn main() {
                 window_aspect_ratio, // aspect ratio
                 1.3962634,           // 80 degrees, Fov
                 1.0,                 // near
-                100.0,               // far
+                1000.0,               // far
             );
 
             let combined_transformation = projection_mat * view_matrix;
