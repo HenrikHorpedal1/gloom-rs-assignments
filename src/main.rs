@@ -191,11 +191,20 @@ fn main() {
         }
         // == // Set up your VAO around here
         let lunar_terrain_path: &str = "./resources/lunarsurface.obj";
+        let helicopter_path: &str = "./resources/helicopter.obj";
         let lunar_terrain_mesh = mesh::Terrain::load(lunar_terrain_path);
+        let heilcopter = mesh::Helicopter::load(helicopter_path);
+
+
 
         // Create the VAO with the cube data
-        let my_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors,&lunar_terrain_mesh.normals, &lunar_terrain_mesh.indices) };
+        let lunar_surface_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors,&lunar_terrain_mesh.normals, &lunar_terrain_mesh.indices) };
+        let heli_body_vao = unsafe { create_vao(&heilcopter.body.vertices, &heilcopter.body.colors,&heilcopter.body.normals, &heilcopter.body.indices) };
+        let heli_door_vao = unsafe { create_vao(&heilcopter.door.vertices, &heilcopter.door.colors,&heilcopter.door.normals, &heilcopter.door.indices) };
+        let heli_main_rotor_vao = unsafe { create_vao(&heilcopter.main_rotor.vertices, &heilcopter.main_rotor.colors,&heilcopter.main_rotor.normals, &heilcopter.main_rotor.indices) };
+        let heli_tail_rotor_vao = unsafe { create_vao(&heilcopter.tail_rotor.vertices, &heilcopter.tail_rotor.colors,&heilcopter.tail_rotor.normals, &heilcopter.tail_rotor.indices) };
 
+        //
         // == // Set up your shaders here
         let simple_shader = unsafe{
             shader::ShaderBuilder::new()
@@ -341,10 +350,22 @@ fn main() {
 
 
                 // == // Issue the necessary gl:: commands to draw your scene here
-                gl::BindVertexArray(my_vao);
+                gl::BindVertexArray(lunar_surface_vao);
                 gl::DrawElements(gl::TRIANGLES,lunar_terrain_mesh.index_count,gl::UNSIGNED_INT,std::ptr::null());
-            }
 
+                gl::BindVertexArray(heli_body_vao);
+                gl::DrawElements(gl::TRIANGLES,heilcopter.body.index_count,gl::UNSIGNED_INT,std::ptr::null());                
+
+                gl::BindVertexArray(heli_door_vao);
+                gl::DrawElements(gl::TRIANGLES,heilcopter.door.index_count,gl::UNSIGNED_INT,std::ptr::null());            
+
+                gl::BindVertexArray(heli_main_rotor_vao);
+                gl::DrawElements(gl::TRIANGLES,heilcopter.main_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
+
+                gl::BindVertexArray(heli_tail_rotor_vao);
+                gl::DrawElements(gl::TRIANGLES,heilcopter.tail_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
+
+            }
             // Display the new color buffer on the display
             context.swap_buffers().unwrap(); // we use "double buffering" to avoid artifacts
         }
