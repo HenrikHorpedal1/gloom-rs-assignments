@@ -167,9 +167,9 @@ unsafe fn draw_scene(
         * translate_back
         * rotation_matrix
         * translate_to_reference           
-        * scaling_matrix; // Finally apply scaling
+        * scaling_matrix; 
 
-    let accumulated_transformation = local_transformation * transformation_so_far;
+    let accumulated_transformation = transformation_so_far * local_transformation;
 
     if node.index_count != -1 {
         unsafe {
