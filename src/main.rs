@@ -1,12 +1,12 @@
 // Uncomment these following global attributes to silence most warnings of "low" interest:
-/*
+
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(unreachable_code)]
 #![allow(unused_mut)]
 #![allow(unused_unsafe)]
 #![allow(unused_variables)]
-*/
+
 extern crate nalgebra_glm as glm;
 use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
@@ -150,25 +150,26 @@ unsafe fn draw_scene(
     uniform_mvp: i32,
     uniform_modelmat: i32,
 ) {
-    let translate_to_reference = glm::translation(&node.reference_point);
-    let translate_back = glm::translation(&(-node.reference_point));
+    let translate_back = glm::translation(&node.reference_point);
+    let translate_to_reference = glm::translation(&(-node.reference_point));
 
     let translation_matrix = glm::translation(&node.position);
 
     let rotation_x_matrix = glm::rotation(node.rotation[0], &glm::vec3(1.0, 0.0, 0.0));
     let rotation_y_matrix = glm::rotation(node.rotation[1], &glm::vec3(0.0, 1.0, 0.0));
     let rotation_z_matrix = glm::rotation(node.rotation[2], &glm::vec3(0.0, 0.0, 1.0));
+
     let rotation_matrix = rotation_x_matrix * rotation_y_matrix * rotation_z_matrix;
 
     let scaling_matrix = glm::scaling(&node.scale); // Assuming node.scale is a glm::Vec3
 
     let local_transformation = translation_matrix
-        * translate_to_reference  // Translate to reference point
+        * translate_back
         * rotation_matrix
-        * translate_back           // Translate back from reference point
+        * translate_to_reference           
         * scaling_matrix; // Finally apply scaling
 
-    let accumulated_transformation = transformation_so_far * local_transformation;
+    let accumulated_transformation = local_transformation * transformation_so_far;
 
     if node.index_count != -1 {
         unsafe {
