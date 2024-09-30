@@ -419,7 +419,7 @@ fn main() {
             let heading = toolbox::simple_heading_animation(elapsed);
             body_node.position[0] = heading.x;
             body_node.position[2] = heading.z;
-            body_node.rotation = glm::vec3(heading.roll, heading.pitch, heading.yaw);
+            body_node.rotation = glm::vec3(heading.pitch, heading.roll, heading.yaw);
             
 
             unsafe {
