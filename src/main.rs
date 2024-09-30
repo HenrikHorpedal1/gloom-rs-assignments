@@ -273,6 +273,7 @@ fn main() {
 
         // Inital positions
         body_node.rotation = glm::vec3(3.14/2.0,0.0,0.0);
+        tail_rotor_node.rotation = glm::vec3(3.14/40.,0,0);
         tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
 
         
