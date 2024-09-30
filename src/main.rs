@@ -272,8 +272,8 @@ fn main() {
        terrain_root_node.print(); 
 
         // Inital positions
-
-       tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
+        body_node.rotation = glm::vec3(90.0,0.0,0.0);
+        tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
 
         
         // == // Set up your shaders here
