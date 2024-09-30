@@ -15,5 +15,5 @@ void main()
     // mat3 normalMatrix = mat3(transpose(inverse(transformationmat)));
 
     // normal = normalize(normalMatrix * aNormal);
-    normal = aNormal;
+    normal = transformationmat * vec4(aNormal, 1.0);
 }
