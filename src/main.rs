@@ -8,16 +8,22 @@
 #![allow(unused_variables)]
 */
 extern crate nalgebra_glm as glm;
-use std::{ mem, ptr, os::raw::c_void };
+use std::sync::{Arc, Mutex, RwLock};
 use std::thread;
-use std::sync::{Mutex, Arc, RwLock};
-mod shader;
+use std::{mem, os::raw::c_void, ptr};
 mod mesh;
-mod util;
 mod scene_graph;
+mod shader;
 mod toolbox;
+mod util;
 
-use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
+use glutin::event::{
+    DeviceEvent,
+    ElementState::{Pressed, Released},
+    Event, KeyboardInput,
+    VirtualKeyCode::{self, *},
+    WindowEvent,
+};
 use glutin::event_loop::ControlFlow;
 use scene_graph::SceneNode;
 
@@ -52,16 +58,20 @@ fn offset<T>(n: u32) -> *const c_void {
 // Get a null pointer (equivalent to an offset of 0)
 // ptr::null()
 
-
 // == // Generate your VAO here
-unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>, indices: &Vec<u32>) -> u32 {
-    // VAO 
+unsafe fn create_vao(
+    vertices: &Vec<f32>,
+    colors: &Vec<f32>,
+    normals: &Vec<f32>,
+    indices: &Vec<u32>,
+) -> u32 {
+    // VAO
     let mut vao: u32 = 0;
-    gl::GenVertexArrays(1, &mut vao); 
+    gl::GenVertexArrays(1, &mut vao);
     gl::BindVertexArray(vao);
 
     // VBOs
-    let mut vbos: Vec<u32> = vec![0; 3]; 
+    let mut vbos: Vec<u32> = vec![0; 3];
     gl::GenBuffers(3, vbos.as_mut_ptr());
 
     // Position
@@ -73,14 +83,14 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
         gl::STATIC_DRAW,
     );
     gl::VertexAttribPointer(
-        0,           
-        3,            
-        gl::FLOAT,     
-        gl::FALSE,      
+        0,
+        3,
+        gl::FLOAT,
+        gl::FALSE,
         3 * size_of::<f32>(),
-        std::ptr::null() 
+        std::ptr::null(),
     );
-    gl::EnableVertexAttribArray(0); 
+    gl::EnableVertexAttribArray(0);
 
     // Colors
     gl::BindBuffer(gl::ARRAY_BUFFER, vbos[1]);
@@ -99,7 +109,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
         std::ptr::null(),
     );
     gl::EnableVertexAttribArray(1);
-   
+
     // Normals
     gl::BindBuffer(gl::ARRAY_BUFFER, vbos[2]);
     gl::BufferData(
@@ -116,14 +126,13 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
         3 * size_of::<f32>(),
         std::ptr::null(),
     );
-    gl::EnableVertexAttribArray(2);    
+    gl::EnableVertexAttribArray(2);
 
-
-    // IBO 
+    // IBO
     let mut ibo: u32 = 0;
     gl::GenBuffers(1, &mut ibo);
     gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
-    
+
     gl::BufferData(
         gl::ELEMENT_ARRAY_BUFFER,
         byte_size_of_array(&indices),
@@ -134,50 +143,64 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
     vao
 }
 
-unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, uniform_mvp: i32, uniform_modelmat: i32) { 
-    // Step 1: Compute the translation to the reference point, and back
+unsafe fn draw_scene(
+    node: &scene_graph::SceneNode,
+    view_projection_matrix: &glm::Mat4,
+    transformation_so_far: &glm::Mat4,
+    uniform_mvp: i32,
+    uniform_modelmat: i32,
+) {
     let translate_to_reference = glm::translation(&node.reference_point);
     let translate_back = glm::translation(&(-node.reference_point));
 
-    // Step 2: Compute the current node's transformation matrices (scaling, rotation, translation)
     let translation_matrix = glm::translation(&node.position);
+
     let rotation_x_matrix = glm::rotation(node.rotation[0], &glm::vec3(1.0, 0.0, 0.0));
     let rotation_y_matrix = glm::rotation(node.rotation[1], &glm::vec3(0.0, 1.0, 0.0));
     let rotation_z_matrix = glm::rotation(node.rotation[2], &glm::vec3(0.0, 0.0, 1.0));
+    let rotation_matrix = rotation_x_matrix * rotation_y_matrix * rotation_z_matrix;
+
     let scaling_matrix = glm::scaling(&node.scale); // Assuming node.scale is a glm::Vec3
 
-    // Step 3: Combine the matrices with respect to the reference point.
-    // First translate to the reference point, then rotate, then translate back.
-    let current_transformation = translation_matrix
+    let local_transformation = translation_matrix
         * translate_to_reference  // Translate to reference point
-        * rotation_x_matrix        // Apply rotations around the reference point
-        * rotation_y_matrix
-        * rotation_z_matrix
+        * rotation_matrix
         * translate_back           // Translate back from reference point
-        * scaling_matrix;          // Finally apply scaling
+        * scaling_matrix; // Finally apply scaling
 
-    // Step 4: Combine the current transformation with the parent's transformation.
-    let combined_transformation = transformation_so_far * current_transformation;
+    let accumulated_transformation = transformation_so_far * local_transformation;
 
-    // Step 5: Pass the combined transformation to the drawable node.
     if node.index_count != -1 {
         unsafe {
-            // Multiply the view_projection_matrix by the current combined transformation.
-            let mvp_matrix = view_projection_matrix * combined_transformation;
+            let mvp_matrix = view_projection_matrix * accumulated_transformation;
 
-            // Set the uniforms for the shader.
             gl::UniformMatrix4fv(uniform_mvp, 1, gl::FALSE, mvp_matrix.as_ptr());
-            gl::UniformMatrix4fv(uniform_modelmat, 1, gl::FALSE, combined_transformation.as_ptr());
+            gl::UniformMatrix4fv(
+                uniform_modelmat,
+                1,
+                gl::FALSE,
+                accumulated_transformation.as_ptr(),
+            );
 
-            // Bind VAO and draw elements.
             gl::BindVertexArray(node.vao_id);
-            gl::DrawElements(gl::TRIANGLES, node.index_count, gl::UNSIGNED_INT, std::ptr::null());
+            gl::DrawElements(
+                gl::TRIANGLES,
+                node.index_count,
+                gl::UNSIGNED_INT,
+                std::ptr::null(),
+            );
         }
     }
-    
+
     // Recurse
-    for &child in &node.children { 
-        draw_scene(&*child, view_projection_matrix, &combined_transformation, uniform_mvp, uniform_modelmat);
+    for &child in &node.children {
+        draw_scene(
+            &*child,
+            view_projection_matrix,
+            &accumulated_transformation,
+            uniform_mvp,
+            uniform_modelmat,
+        );
     }
 }
 
@@ -187,9 +210,11 @@ fn main() {
     let wb = glutin::window::WindowBuilder::new()
         .with_title("Gloom-rs")
         .with_resizable(true)
-        .with_inner_size(glutin::dpi::LogicalSize::new(INITIAL_SCREEN_W, INITIAL_SCREEN_H));
-    let cb = glutin::ContextBuilder::new()
-        .with_vsync(true);
+        .with_inner_size(glutin::dpi::LogicalSize::new(
+            INITIAL_SCREEN_W,
+            INITIAL_SCREEN_H,
+        ));
+    let cb = glutin::ContextBuilder::new().with_vsync(true);
     let windowed_context = cb.build_windowed(wb, &el).unwrap();
     // Uncomment these if you want to use the mouse for controls, but want it to be confined to the screen and/or invisible.
     // windowed_context.window().set_cursor_grab(true).expect("failed to grab cursor");
@@ -233,70 +258,104 @@ fn main() {
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
             gl::Enable(gl::DEBUG_OUTPUT_SYNCHRONOUS);
             gl::DebugMessageCallback(Some(util::debug_callback), ptr::null());
-// Print some diagnostics println!("{}: {}", util::get_gl_string(gl::VENDOR), util::get_gl_string(gl::RENDERER));
+            // Print some diagnostics println!("{}: {}", util::get_gl_string(gl::VENDOR), util::get_gl_string(gl::RENDERER));
             println!("OpenGL\t: {}", util::get_gl_string(gl::VERSION));
-            println!("GLSL\t: {}", util::get_gl_string(gl::SHADING_LANGUAGE_VERSION));
+            println!(
+                "GLSL\t: {}",
+                util::get_gl_string(gl::SHADING_LANGUAGE_VERSION)
+            );
         }
-        // == // Set up your VAO around here
+        // load meshes
         let lunar_terrain_path: &str = "./resources/lunarsurface.obj";
         let helicopter_path: &str = "./resources/helicopter.obj";
         let lunar_terrain_mesh = mesh::Terrain::load(lunar_terrain_path);
         let heilcopter = mesh::Helicopter::load(helicopter_path);
 
+        // VAOs
+        let mut lunar_surface_vao = unsafe {
+            create_vao(
+                &lunar_terrain_mesh.vertices,
+                &lunar_terrain_mesh.colors,
+                &lunar_terrain_mesh.normals,
+                &lunar_terrain_mesh.indices,
+            )
+        };
 
-
-        // Create the VAO with the cube data
-        let mut lunar_surface_vao = unsafe { create_vao(&lunar_terrain_mesh.vertices, &lunar_terrain_mesh.colors,&lunar_terrain_mesh.normals, &lunar_terrain_mesh.indices) };
-
-        let heli_body_vao = unsafe { create_vao(&heilcopter.body.vertices, &heilcopter.body.colors,&heilcopter.body.normals, &heilcopter.body.indices) };
-        let heli_door_vao = unsafe { create_vao(&heilcopter.door.vertices, &heilcopter.door.colors,&heilcopter.door.normals, &heilcopter.door.indices) };
-        let heli_main_rotor_vao = unsafe { create_vao(&heilcopter.main_rotor.vertices, &heilcopter.main_rotor.colors,&heilcopter.main_rotor.normals, &heilcopter.main_rotor.indices) };
-        let heli_tail_rotor_vao = unsafe { create_vao(&heilcopter.tail_rotor.vertices, &heilcopter.tail_rotor.colors,&heilcopter.tail_rotor.normals, &heilcopter.tail_rotor.indices) };
+        let heli_body_vao = unsafe {
+            create_vao(
+                &heilcopter.body.vertices,
+                &heilcopter.body.colors,
+                &heilcopter.body.normals,
+                &heilcopter.body.indices,
+            )
+        };
+        let heli_door_vao = unsafe {
+            create_vao(
+                &heilcopter.door.vertices,
+                &heilcopter.door.colors,
+                &heilcopter.door.normals,
+                &heilcopter.door.indices,
+            )
+        };
+        let heli_main_rotor_vao = unsafe {
+            create_vao(
+                &heilcopter.main_rotor.vertices,
+                &heilcopter.main_rotor.colors,
+                &heilcopter.main_rotor.normals,
+                &heilcopter.main_rotor.indices,
+            )
+        };
+        let heli_tail_rotor_vao = unsafe {
+            create_vao(
+                &heilcopter.tail_rotor.vertices,
+                &heilcopter.tail_rotor.colors,
+                &heilcopter.tail_rotor.normals,
+                &heilcopter.tail_rotor.indices,
+            )
+        };
 
         // Scene Nodes
         let mut terrain_root_node = SceneNode::new();
-        let mut terrain_node = SceneNode::from_vao(lunar_surface_vao, lunar_terrain_mesh.index_count);
+        let mut terrain_node =
+            SceneNode::from_vao(lunar_surface_vao, lunar_terrain_mesh.index_count);
         terrain_root_node.add_child(&terrain_node);
 
         let mut heli_root_node = SceneNode::new();
         terrain_node.add_child(&heli_root_node);
-        let mut body_node = SceneNode::from_vao(heli_body_vao,heilcopter.body.index_count);
-        heli_root_node.add_child(&body_node);
-        let mut door_node = SceneNode::from_vao(heli_door_vao,heilcopter.door.index_count);
-        body_node.add_child(&door_node);
-        let mut main_rotor_node = SceneNode::from_vao(heli_main_rotor_vao,heilcopter.main_rotor.index_count);
-        body_node.add_child(&main_rotor_node);
-        let mut tail_rotor_node = SceneNode::from_vao(heli_tail_rotor_vao,heilcopter.tail_rotor.index_count);
-        body_node.add_child(&tail_rotor_node);
 
-       terrain_root_node.print(); 
+        let mut body_node = SceneNode::from_vao(heli_body_vao, heilcopter.body.index_count);
+        heli_root_node.add_child(&body_node);
+
+        let mut door_node = SceneNode::from_vao(heli_door_vao, heilcopter.door.index_count);
+        body_node.add_child(&door_node);
+
+        let mut main_rotor_node =
+            SceneNode::from_vao(heli_main_rotor_vao, heilcopter.main_rotor.index_count);
+        body_node.add_child(&main_rotor_node);
+
+        let mut tail_rotor_node =
+            SceneNode::from_vao(heli_tail_rotor_vao, heilcopter.tail_rotor.index_count);
+        body_node.add_child(&tail_rotor_node);
 
         // Inital positions
         tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
         body_node.position = glm::vec3(0.0, 10.0, 0.0);
 
         // == // Set up your shaders here
-        let simple_shader = unsafe{
+        let simple_shader = unsafe {
             shader::ShaderBuilder::new()
                 .attach_file("./shaders/simple.frag")
                 .attach_file("./shaders/simple.vert")
                 .link()
         };
-        unsafe{
+        unsafe {
             simple_shader.activate();
         }
 
-        let uniform_mvp = unsafe {
-            simple_shader.get_uniform_location("mvp")
-        };
-        let uniform_modelmat = unsafe {
-            simple_shader.get_uniform_location("modelmat")
-        };
+        let uniform_mvp = unsafe { simple_shader.get_uniform_location("mvp") };
+        let uniform_modelmat = unsafe { simple_shader.get_uniform_location("modelmat") };
 
         // Camera stuff
-        // position: [[-1.868978, 2.157958, 1.1250876]]
-        // horizontal rot: 7.160985
-        // vertical rot: -1.0471976
         let starting_position = glm::vec3(0.0, 0.0, 1.0);
         let mut camera_position = starting_position;
         let starting_horizontal_rot = 0.0;
@@ -321,7 +380,9 @@ fn main() {
                     window_aspect_ratio = new_size.0 as f32 / new_size.1 as f32;
                     (*new_size).2 = false;
                     println!("Window was resized to {}x{}", new_size.0, new_size.1);
-                    unsafe { gl::Viewport(0, 0, new_size.0 as i32, new_size.1 as i32); }
+                    unsafe {
+                        gl::Viewport(0, 0, new_size.0 as i32, new_size.1 as i32);
+                    }
                 }
             }
 
@@ -338,7 +399,6 @@ fn main() {
 
             if let Ok(keys) = pressed_keys.lock() {
                 for key in keys.iter() {
-
                     match key {
                         // The VirtualKeyCode enum is defined here:
                         // https://docs.rs/winit/0.25.0/winit/event/enum.VirtualKeyCode.html
@@ -356,35 +416,30 @@ fn main() {
                         VirtualKeyCode::Left => horizontal_rot -= delta_time,
                         VirtualKeyCode::Up => {
                             vertical_rot += delta_time;
-                            vertical_rot = vertical_rot.clamp(-std::f32::consts::PI/3.0,std::f32::consts::PI/3.0);
-                        },
+                            vertical_rot = vertical_rot
+                                .clamp(-std::f32::consts::PI / 3.0, std::f32::consts::PI / 3.0);
+                        }
                         VirtualKeyCode::Down => {
                             vertical_rot -= delta_time;
-                            vertical_rot = vertical_rot.clamp(-std::f32::consts::PI/3.0,std::f32::consts::PI/3.0);
-                        },
+                            vertical_rot = vertical_rot
+                                .clamp(-std::f32::consts::PI / 3.0, std::f32::consts::PI / 3.0);
+                        }
 
                         // get back to starting point
                         VirtualKeyCode::R => {
                             camera_position = starting_position;
                             horizontal_rot = starting_horizontal_rot;
                             vertical_rot = starting_vertical_rot;
-
                         }
 
                         // default handler:
-                        _ => { }
+                        _ => {}
                     }
                 }
             }
 
-            // for finding an appropriate position and orientation:
-            // println!("position: {:?}", camera_position);
-            // println!("horizontal rot: {}", horizontal_rot);
-            // println!("vertical rot: {}", vertical_rot);
-
             // Handle mouse movement. delta contains the x and y movement of the mouse since last frame in pixels
             if let Ok(mut delta) = mouse_delta.lock() {
-
                 // == // Optionally access the accumulated mouse movement between
                 // == // frames here with delta.0 and delta.1
 
@@ -393,54 +448,53 @@ fn main() {
 
             if glm::length(&movement_direction) > 0.0 {
                 movement_direction = glm::normalize(&movement_direction);
-                let speed = 20.0; 
+                let speed = 20.0;
                 camera_position += movement_direction * delta_time * speed;
             }
 
-            let view_matrix = glm::look_at(
-                &camera_position,
-                &(camera_position + forward),
-                &up,
-            );
+            let view_matrix = glm::look_at(&camera_position, &(camera_position + forward), &up);
 
             let projection_mat: glm::Mat4 = glm::perspective(
                 window_aspect_ratio, // aspect ratio
                 1.3962634,           // 80 degrees, Fov
                 1.0,                 // near
-                1000.0,               // far
+                1000.0,              // far
             );
 
-            let combined_transformation = projection_mat * view_matrix;
+            let view_projection_mat = projection_mat * view_matrix;
 
             // Rotor movement
             let rotor_speed = 5.0;
-            main_rotor_node.rotation += glm::vec3(0.0,rotor_speed * delta_time,0.0);
-            tail_rotor_node.rotation += glm::vec3(rotor_speed * delta_time,0.0,0.0);  
+            main_rotor_node.rotation += glm::vec3(0.0, rotor_speed * delta_time, 0.0);
+            tail_rotor_node.rotation += glm::vec3(rotor_speed * delta_time, 0.0, 0.0);
 
             // Helicopter path
             let heading = toolbox::simple_heading_animation(elapsed);
             body_node.position[0] = heading.x;
             body_node.position[2] = heading.z;
             body_node.rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
-            
 
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-                draw_scene(&terrain_node,&combined_transformation,&glm::Mat4x4::identity(),uniform_mvp,uniform_modelmat);
+                draw_scene(
+                    &terrain_node,
+                    &view_projection_mat,
+                    &glm::Mat4x4::identity(),
+                    uniform_mvp,
+                    uniform_modelmat,
+                );
             }
             // Display the new color buffer on the display
             context.swap_buffers().unwrap(); // we use "double buffering" to avoid artifacts
         }
     });
 
-
     // == //
     // == // From here on down there are only internals.
     // == //
-
 
     // Keep track of the health of the rendering thread
     let render_thread_healthy = Arc::new(RwLock::new(true));
@@ -466,19 +520,38 @@ fn main() {
         }
 
         match event {
-            Event::WindowEvent { event: WindowEvent::Resized(physical_size), .. } => {
-                println!("New window size received: {}x{}", physical_size.width, physical_size.height);
+            Event::WindowEvent {
+                event: WindowEvent::Resized(physical_size),
+                ..
+            } => {
+                println!(
+                    "New window size received: {}x{}",
+                    physical_size.width, physical_size.height
+                );
                 if let Ok(mut new_size) = arc_window_size.lock() {
                     *new_size = (physical_size.width, physical_size.height, true);
                 }
             }
-            Event::WindowEvent { event: WindowEvent::CloseRequested, .. } => {
+            Event::WindowEvent {
+                event: WindowEvent::CloseRequested,
+                ..
+            } => {
                 *control_flow = ControlFlow::Exit;
             }
             // Keep track of currently pressed keys to send to the rendering thread
-            Event::WindowEvent { event: WindowEvent::KeyboardInput {
-                    input: KeyboardInput { state: key_state, virtual_keycode: Some(keycode), .. }, .. }, .. } => {
-
+            Event::WindowEvent {
+                event:
+                    WindowEvent::KeyboardInput {
+                        input:
+                            KeyboardInput {
+                                state: key_state,
+                                virtual_keycode: Some(keycode),
+                                ..
+                            },
+                        ..
+                    },
+                ..
+            } => {
                 if let Ok(mut keys) = arc_pressed_keys.lock() {
                     match key_state {
                         Released => {
@@ -486,7 +559,7 @@ fn main() {
                                 let i = keys.iter().position(|&k| k == keycode).unwrap();
                                 keys.remove(i);
                             }
-                        },
+                        }
                         Pressed => {
                             if !keys.contains(&keycode) {
                                 keys.push(keycode);
@@ -497,18 +570,25 @@ fn main() {
 
                 // Handle Escape and Q keys separately
                 match keycode {
-                    Escape => { *control_flow = ControlFlow::Exit; }
-                    Q      => { *control_flow = ControlFlow::Exit; }
-                    _      => { }
+                    Escape => {
+                        *control_flow = ControlFlow::Exit;
+                    }
+                    Q => {
+                        *control_flow = ControlFlow::Exit;
+                    }
+                    _ => {}
                 }
             }
-            Event::DeviceEvent { event: DeviceEvent::MouseMotion { delta }, .. } => {
+            Event::DeviceEvent {
+                event: DeviceEvent::MouseMotion { delta },
+                ..
+            } => {
                 // Accumulate mouse movement
                 if let Ok(mut position) = arc_mouse_delta.lock() {
                     *position = (position.0 + delta.0 as f32, position.1 + delta.1 as f32);
                 }
             }
-            _ => { }
+            _ => {}
         }
     });
 }
