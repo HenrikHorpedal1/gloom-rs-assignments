@@ -6,7 +6,9 @@ layout (location = 2) in vec3 aNormal;
 out vec4 vertexColor;  // Output variable to pass color to fragment shader
 out vec3 normal;
 
+
 uniform mat4 transformationmat;
+norm vec4;
 void main()
 {
     gl_Position = transformationmat * vec4(aPos, 1.0);  // Convert vec3 to vec4 for position
