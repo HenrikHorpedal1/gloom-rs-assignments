@@ -15,6 +15,7 @@ mod shader;
 mod mesh;
 mod util;
 mod scene_graph;
+mod toolbox;
 
 use glutin::event::{Event, WindowEvent, DeviceEvent, KeyboardInput, ElementState::{Pressed, Released}, VirtualKeyCode::{self, *}};
 use glutin::event_loop::ControlFlow;
@@ -273,7 +274,8 @@ fn main() {
 
         // Inital positions
         tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
-        
+        body_node.position = glm::vec3(0.0, 10.0, 0);
+
         // == // Set up your shaders here
         let simple_shader = unsafe{
             shader::ShaderBuilder::new()
@@ -408,11 +410,18 @@ fn main() {
 
             let combined_transformation = projection_mat * view_matrix;
 
-            // Helicopter movement
+            // Rotor movement
             let rotor_speed = 5.0;
             main_rotor_node.rotation += glm::vec3(0.0,rotor_speed * delta_time,0.0);
             tail_rotor_node.rotation += glm::vec3(rotor_speed * delta_time,0.0,0.0);  
+
+            // Helicopter path
+            let heading = toolbox::simple_heading_animation(elapsed);
+            body_node.position[0] = heading.x;
+            body_node.position[2] = heading.z;
+            body_node.rotation = glm::vec3(heading.roll, heading.pitch, heading.yaw);
             
+
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
