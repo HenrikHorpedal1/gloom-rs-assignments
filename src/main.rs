@@ -272,7 +272,7 @@ fn main() {
        terrain_root_node.print(); 
 
         // Inital positions
-
+        tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
         
         // == // Set up your shaders here
         let simple_shader = unsafe{
