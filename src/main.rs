@@ -134,59 +134,50 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
     vao
 }
 
-unsafe fn draw_scene(
-    node: &scene_graph::SceneNode,
-    view_projection_matrix: &glm::Mat4,
-    transformation_so_far: &glm::Mat4,
-    uniform_mvp: i32,
-    uniform_modelmat: i32,
-) {
+unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, uniform_mvp: i32, uniform_modelmat: i32) { 
+    // Step 1: Compute the translation to the reference point, and back
     let translate_to_reference = glm::translation(&node.reference_point);
     let translate_back = glm::translation(&(-node.reference_point));
-    let translation_matrix = glm::translation(&node.position);
 
-    // Ensure rotation angles are in radians
+    // Step 2: Compute the current node's transformation matrices (scaling, rotation, translation)
+    let translation_matrix = glm::translation(&node.position);
     let rotation_x_matrix = glm::rotation(node.rotation[0], &glm::vec3(1.0, 0.0, 0.0));
     let rotation_y_matrix = glm::rotation(node.rotation[1], &glm::vec3(0.0, 1.0, 0.0));
     let rotation_z_matrix = glm::rotation(node.rotation[2], &glm::vec3(0.0, 0.0, 1.0));
+    let scaling_matrix = glm::scaling(&node.scale); // Assuming node.scale is a glm::Vec3
 
-    // Combine rotations
-    let rotation_matrix = rotation_z_matrix * rotation_y_matrix * rotation_x_matrix;
-
-    // Construct the current transformation
+    // Step 3: Combine the matrices with respect to the reference point.
+    // First translate to the reference point, then rotate, then translate back.
     let current_transformation = translation_matrix
-        * translate_to_reference
-        * rotation_matrix
-        * translate_back;
+        * translate_to_reference  // Translate to reference point
+        * rotation_x_matrix        // Apply rotations around the reference point
+        * rotation_y_matrix
+        * rotation_z_matrix
+        * translate_back           // Translate back from reference point
+        * scaling_matrix;          // Finally apply scaling
 
-    // Combine with parent transformation
+    // Step 4: Combine the current transformation with the parent's transformation.
     let combined_transformation = transformation_so_far * current_transformation;
 
-    // Pass transformations to the shader
+    // Step 5: Pass the combined transformation to the drawable node.
     if node.index_count != -1 {
         unsafe {
+            // Multiply the view_projection_matrix by the current combined transformation.
             let mvp_matrix = view_projection_matrix * combined_transformation;
+
+            // Set the uniforms for the shader.
             gl::UniformMatrix4fv(uniform_mvp, 1, gl::FALSE, mvp_matrix.as_ptr());
             gl::UniformMatrix4fv(uniform_modelmat, 1, gl::FALSE, combined_transformation.as_ptr());
+
+            // Bind VAO and draw elements.
             gl::BindVertexArray(node.vao_id);
-            gl::DrawElements(
-                gl::TRIANGLES,
-                node.index_count,
-                gl::UNSIGNED_INT,
-                std::ptr::null(),
-            );
+            gl::DrawElements(gl::TRIANGLES, node.index_count, gl::UNSIGNED_INT, std::ptr::null());
         }
     }
-
-    // Recurse for child nodes
-    for &child in &node.children {
-        draw_scene(
-            &*child,
-            view_projection_matrix,
-            &combined_transformation,
-            uniform_mvp,
-            uniform_modelmat,
-        );
+    
+    // Recurse
+    for &child in &node.children { 
+        draw_scene(&*child, view_projection_matrix, &combined_transformation, uniform_mvp, uniform_modelmat);
     }
 }
 
