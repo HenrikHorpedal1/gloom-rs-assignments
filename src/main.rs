@@ -274,7 +274,7 @@ fn main() {
 
         // Inital positions
         tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
-        body_node.position = glm::vec3(0.0, 10.0, 0);
+        body_node.position = glm::vec3(0.0, 10.0, 0.0);
 
         // == // Set up your shaders here
         let simple_shader = unsafe{
