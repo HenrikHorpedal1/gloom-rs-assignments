@@ -163,7 +163,7 @@ unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm
     if node.index_count != -1 {
         unsafe {
             // Multiply the view_projection_matrix by the current combined transformation.
-            let mvp_matrix = view_projection_matrix * combined_transformation;
+            let mvp_matrix = combined_transformation * view_projection_matrix;
 
             // Set the uniform for the shader.
             gl::UniformMatrix4fv(uniform_variable, 1, gl::FALSE, mvp_matrix.as_ptr());
