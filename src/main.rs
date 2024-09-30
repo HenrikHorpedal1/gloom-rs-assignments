@@ -410,8 +410,8 @@ fn main() {
 
             // Helicopter movement
             let rotor_speed = 5.0;
-            main_rotor_node.rotation += glm::vec3(0.0,rotor_speed * delta_time,0.0);
-            tail_rotor_node.rotation += glm::vec3(0.0,rotor_speed * delta_time,0.0);  
+            //main_rotor_node.rotation += glm::vec3(0.0,rotor_speed * delta_time,0.0);
+            tail_rotor_node.rotation += glm::vec3(rotor_speed * delta_time,0.0,0.0);  
             
             unsafe {
                 // Clear the color and depth buffers
