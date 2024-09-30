@@ -175,7 +175,7 @@ unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm
     
     // Recurse
     for &child in &node.children { 
-        draw_scene(&*child, view_projection_matrix, transformation_so_far, uniform_variable);
+        draw_scene(&*child, view_projection_matrix, &combined_transformation, uniform_variable);
     }
 }
 
