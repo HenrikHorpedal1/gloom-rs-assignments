@@ -134,7 +134,7 @@ unsafe fn create_vao(vertices: &Vec<f32>, colors: &Vec<f32>, normals: &Vec<f32>,
     vao
 }
 
-unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, uniform_variable: i32) { 
+unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm::Mat4, transformation_so_far: &glm::Mat4, uniform_mvp: i32, uniform_modelmat: i32) { 
     // Step 1: Compute the translation to the reference point, and back
     let translate_to_reference = glm::translation(&node.reference_point);
     let translate_back = glm::translation(&(-node.reference_point));
@@ -165,9 +165,10 @@ unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm
             // Multiply the view_projection_matrix by the current combined transformation.
             let mvp_matrix = view_projection_matrix * combined_transformation;
 
-            // Set the uniform for the shader.
-            gl::UniformMatrix4fv(uniform_variable, 1, gl::FALSE, mvp_matrix.as_ptr());
-            
+            // Set the uniforms for the shader.
+            gl::UniformMatrix4fv(uniform_mvp, 1, gl::FALSE, mvp_matrix.as_ptr());
+            gl::UniformMatrix4fv(uniform_modelmat, 1, gl::FALSE, combined_transformation.as_ptr());
+
             // Bind VAO and draw elements.
             gl::BindVertexArray(node.vao_id);
             gl::DrawElements(gl::TRIANGLES, node.index_count, gl::UNSIGNED_INT, std::ptr::null());
@@ -176,7 +177,7 @@ unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm
     
     // Recurse
     for &child in &node.children { 
-        draw_scene(&*child, view_projection_matrix, &combined_transformation, uniform_variable);
+        draw_scene(&*child, view_projection_matrix, &combined_transformation, uniform_mvp, uniform_modelmat);
     }
 }
 
@@ -287,8 +288,11 @@ fn main() {
             simple_shader.activate();
         }
 
-        let uniform_location = unsafe {
-            simple_shader.get_uniform_location("transformationmat")
+        let uniform_mvp = unsafe {
+            simple_shader.get_uniform_location("mvp")
+        };
+        let uniform_modelmat = unsafe {
+            simple_shader.get_uniform_location("modelmat")
         };
 
         // Camera stuff
@@ -427,7 +431,7 @@ fn main() {
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-                draw_scene(&terrain_node,&combined_transformation,&glm::Mat4x4::identity(),uniform_location);
+                draw_scene(&terrain_node,&combined_transformation,&glm::Mat4x4::identity(),uniform_mvp,uniform_modelmat);
             }
             // Display the new color buffer on the display
             context.swap_buffers().unwrap(); // we use "double buffering" to avoid artifacts
