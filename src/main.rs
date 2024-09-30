@@ -272,9 +272,6 @@ fn main() {
        terrain_root_node.print(); 
 
         // Inital positions
-        body_node.rotation = glm::vec3(3.14/2.0,0.0,0.0);
-        tail_rotor_node.rotation = glm::vec3(3.14/4.0,0.0,0.0);
-        tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
 
         
         // == // Set up your shaders here
@@ -411,7 +408,11 @@ fn main() {
 
             let combined_transformation = projection_mat * view_matrix;
 
-
+            // Helicopter movement
+            let rotor_speed = 5.0;
+            main_rotor_node.rotation += glm::vec3(0.0,rotor_speed * delta_time,0.0);
+            tail_rotor_node.rotation += glm::vec3(0.0,rotor_speed * delta_time,0.0);  
+            
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
