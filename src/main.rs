@@ -150,9 +150,9 @@ unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm
     // First translate to the reference point, then rotate, then translate back.
     let current_transformation = translation_matrix
         * translate_to_reference  // Translate to reference point
-        * rotation_x_matrix        // Apply rotations around the reference point
-        * rotation_y_matrix
         * rotation_z_matrix
+        * rotation_y_matrix
+        * rotation_x_matrix        // Apply rotations around the reference point
         * translate_back           // Translate back from reference point
         * scaling_matrix;          // Finally apply scaling
 
