@@ -150,9 +150,9 @@ unsafe fn draw_scene(node: &scene_graph::SceneNode, view_projection_matrix: &glm
     // First translate to the reference point, then rotate, then translate back.
     let current_transformation = translation_matrix
         * translate_to_reference  // Translate to reference point
-        * rotation_z_matrix
-        * rotation_y_matrix
         * rotation_x_matrix        // Apply rotations around the reference point
+        * rotation_y_matrix
+        * rotation_z_matrix
         * translate_back           // Translate back from reference point
         * scaling_matrix;          // Finally apply scaling
 
@@ -427,25 +427,7 @@ fn main() {
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-
-                // == // Issue the necessary gl:: commands to draw your scene here
-                //gl::BindVertexArray(lunar_surface_vao);
-                //gl::DrawElements(gl::TRIANGLES,lunar_terrain_mesh.index_count,gl::UNSIGNED_INT,std::ptr::null());
-
-                //gl::BindVertexArray(heli_body_vao);
-                //gl::DrawElements(gl::TRIANGLES,heilcopter.body.index_count,gl::UNSIGNED_INT,std::ptr::null());                
-
-                //gl::BindVertexArray(heli_door_vao);
-                //gl::DrawElements(gl::TRIANGLES,heilcopter.door.index_count,gl::UNSIGNED_INT,std::ptr::null());            
-
-                //gl::BindVertexArray(heli_main_rotor_vao);
-                //gl::DrawElements(gl::TRIANGLES,heilcopter.main_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
-
-                //gl::BindVertexArray(heli_tail_rotor_vao);
-                //gl::DrawElements(gl::TRIANGLES,heilcopter.tail_rotor.index_count,gl::UNSIGNED_INT,std::ptr::null());
-
                 draw_scene(&terrain_node,&combined_transformation,&glm::Mat4x4::identity(),uniform_location);
-
             }
             // Display the new color buffer on the display
             context.swap_buffers().unwrap(); // we use "double buffering" to avoid artifacts
