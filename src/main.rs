@@ -504,9 +504,9 @@ fn main() {
                 //doors
                 if open_door {
 
-                    let door_speed = 0.1;
-                    heli_doors[i].rotation.y += door_speed * delta_time;
-                    heli_doors[i].rotation.y = heli_doors[i].rotation.y.clamp(0.0, 3.14/2.0);
+                    let door_speed = 0.5;
+                    heli_doors[i].position.z += door_speed * delta_time;
+                    heli_doors[i].position.z = heli_doors[i].rotation.y.clamp(0.0, 3.14/2.0);
                 }
             }
            
