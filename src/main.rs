@@ -335,7 +335,6 @@ fn main() {
 
             let mut body_node = SceneNode::from_vao(heli_body_vao, heilcopter.body.index_count);
             heli_root_node.add_child(&body_node);
-            heli_bodies.append(body_node);
 
             let mut door_node = SceneNode::from_vao(heli_door_vao, heilcopter.door.index_count);
             body_node.add_child(&door_node);
@@ -343,16 +342,18 @@ fn main() {
             let mut main_rotor_node =
                 SceneNode::from_vao(heli_main_rotor_vao, heilcopter.main_rotor.index_count);
             body_node.add_child(&main_rotor_node);
-            heli_main_rotors.append(main_rotor_node);
 
             let mut tail_rotor_node =
                 SceneNode::from_vao(heli_tail_rotor_vao, heilcopter.tail_rotor.index_count);
             body_node.add_child(&tail_rotor_node);
-            heli_tail_rotors.append(tail_rotor_node);
 
             // Inital positions
             tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
             body_node.position = glm::vec3(0.0, 10.0, 0.0);
+
+            heli_bodies.push(body_node);
+            heli_main_rotors.push(main_rotor_node);
+            heli_tail_rotors.push(tail_rotor_node);
         }
         // == // Set up your shaders here
         let simple_shader = unsafe {
@@ -475,7 +476,7 @@ fn main() {
             );
 
             let view_projection_mat = projection_mat * view_matrix;
-            let offset = 1.0;
+            let mut offset = 1.0;
             for i in 0..num_helicopters {
 
                 // rotor movement
