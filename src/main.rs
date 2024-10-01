@@ -159,9 +159,9 @@ unsafe fn draw_scene(
     let rotation_y_matrix = glm::rotation(node.rotation[1], &glm::vec3(0.0, 1.0, 0.0));
     let rotation_z_matrix = glm::rotation(node.rotation[2], &glm::vec3(0.0, 0.0, 1.0));
 
-    let rotation_matrix = rotation_x_matrix * rotation_y_matrix * rotation_z_matrix;
+    let rotation_matrix = rotation_x_matrix * rotation_y_matrix * rotation_z_matrix; // The animation is going to look a little off, due to us so far using extrinsic euler angles instead of intrinsic angles. To partially mitigate this we suggest first applying Z rotation, then the Y rotation, then the X rotation.
 
-    let scaling_matrix = glm::scaling(&node.scale); // Assuming node.scale is a glm::Vec3
+    let scaling_matrix = glm::scaling(&node.scale); // allways unit scaling anyways
 
     let local_transformation = translation_matrix
         * translate_back
@@ -273,6 +273,7 @@ fn main() {
         let heilcopter = mesh::Helicopter::load(helicopter_path);
 
         // VAOs
+
         let mut lunar_surface_vao = unsafe {
             create_vao(
                 &lunar_terrain_mesh.vertices,
@@ -315,33 +316,44 @@ fn main() {
             )
         };
 
-        // Scene Nodes
+        // Scene nodes
         let mut terrain_root_node = SceneNode::new();
         let mut terrain_node =
-            SceneNode::from_vao(lunar_surface_vao, lunar_terrain_mesh.index_count);
+        SceneNode::from_vao(lunar_surface_vao, lunar_terrain_mesh.index_count);
         terrain_root_node.add_child(&terrain_node);
 
-        let mut heli_root_node = SceneNode::new();
-        terrain_node.add_child(&heli_root_node);
+        // Multiple helicopters:
+        let num_helicopters = 5;
+        let mut heli_bodies = vec![];
+        let mut heli_main_rotors = vec![];
+        let mut heli_tail_rotors = vec![];
 
-        let mut body_node = SceneNode::from_vao(heli_body_vao, heilcopter.body.index_count);
-        heli_root_node.add_child(&body_node);
+        for i in 0..num_helicopters {
+            
+            let mut heli_root_node = SceneNode::new();
+            terrain_node.add_child(&heli_root_node);
 
-        let mut door_node = SceneNode::from_vao(heli_door_vao, heilcopter.door.index_count);
-        body_node.add_child(&door_node);
+            let mut body_node = SceneNode::from_vao(heli_body_vao, heilcopter.body.index_count);
+            heli_root_node.add_child(&body_node);
+            heli_bodies.append(body_node);
 
-        let mut main_rotor_node =
-            SceneNode::from_vao(heli_main_rotor_vao, heilcopter.main_rotor.index_count);
-        body_node.add_child(&main_rotor_node);
+            let mut door_node = SceneNode::from_vao(heli_door_vao, heilcopter.door.index_count);
+            body_node.add_child(&door_node);
 
-        let mut tail_rotor_node =
-            SceneNode::from_vao(heli_tail_rotor_vao, heilcopter.tail_rotor.index_count);
-        body_node.add_child(&tail_rotor_node);
+            let mut main_rotor_node =
+                SceneNode::from_vao(heli_main_rotor_vao, heilcopter.main_rotor.index_count);
+            body_node.add_child(&main_rotor_node);
+            heli_main_rotors.append(main_rotor_node);
 
-        // Inital positions
-        tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
-        body_node.position = glm::vec3(0.0, 10.0, 0.0);
+            let mut tail_rotor_node =
+                SceneNode::from_vao(heli_tail_rotor_vao, heilcopter.tail_rotor.index_count);
+            body_node.add_child(&tail_rotor_node);
+            heli_tail_rotors.append(tail_rotor_node);
 
+            // Inital positions
+            tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
+            body_node.position = glm::vec3(0.0, 10.0, 0.0);
+        }
         // == // Set up your shaders here
         let simple_shader = unsafe {
             shader::ShaderBuilder::new()
@@ -463,23 +475,31 @@ fn main() {
             );
 
             let view_projection_mat = projection_mat * view_matrix;
+            let offset = 1.0;
+            for i in 0..num_helicopters {
 
-            // Rotor movement
-            let rotor_speed = 5.0;
-            main_rotor_node.rotation += glm::vec3(0.0, rotor_speed * delta_time, 0.0);
-            tail_rotor_node.rotation += glm::vec3(rotor_speed * delta_time, 0.0, 0.0);
+                // rotor movement
+                let rotor_speed = 5.0;
+                heli_main_rotors[i].rotation += glm::vec3(0.0, rotor_speed * delta_time, 0.0);
+                heli_tail_rotors[i].rotation += glm::vec3(rotor_speed * delta_time, 0.0, 0.0);
 
-            // Helicopter path
-            let heading = toolbox::simple_heading_animation(elapsed);
-            body_node.position[0] = heading.x;
-            body_node.position[2] = heading.z;
-            body_node.rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
+                // Helicopter path
+                let heading = toolbox::simple_heading_animation(elapsed + offset);
+                heli_bodies[i].position[0] = heading.x;
+                heli_bodies[i].position[2] = heading.z;
+                heli_bodies[i].rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
+
+                offset += 1.0;
+            }
+           
+
+
 
             unsafe {
                 // Clear the color and depth buffers
                 gl::ClearColor(0.035, 0.046, 0.078, 1.0); // night sky
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-
+ 
                 draw_scene(
                     &terrain_node,
                     &view_projection_mat,
