@@ -489,16 +489,16 @@ fn main() {
             let mut offset = 0.8;
             for i in 0..num_helicopters {
 
-                //// rotor movement
-                //let rotor_speed = 5.0;
-                //heli_main_rotors[i].rotation += glm::vec3(0.0, rotor_speed * delta_time, 0.0);
-                //heli_tail_rotors[i].rotation += glm::vec3(rotor_speed * delta_time, 0.0, 0.0);
+                // rotor movement
+                let rotor_speed = 5.0;
+                heli_main_rotors[i].rotation += glm::vec3(0.0, rotor_speed * delta_time, 0.0);
+                heli_tail_rotors[i].rotation += glm::vec3(rotor_speed * delta_time, 0.0, 0.0);
 
-                //// Helicopter path
-                //let heading = toolbox::simple_heading_animation(elapsed + offset * i as f32);
-                //heli_bodies[i].position[0] = heading.x;
-                //heli_bodies[i].position[2] = heading.z;
-                //heli_bodies[i].rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
+                // Helicopter path
+                let heading = toolbox::simple_heading_animation(elapsed + offset * i as f32);
+                heli_bodies[i].position[0] = heading.x;
+                heli_bodies[i].position[2] = heading.z;
+                heli_bodies[i].rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
 
 
                 //doors
