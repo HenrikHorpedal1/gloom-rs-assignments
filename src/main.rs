@@ -476,7 +476,7 @@ fn main() {
             );
 
             let view_projection_mat = projection_mat * view_matrix;
-            let mut offset = 0.5;
+            let mut offset = 0.7;
             for i in 0..num_helicopters {
 
                 // rotor movement
