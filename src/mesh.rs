@@ -28,6 +28,48 @@ impl Mesh {
         }
     }
 }
+// Bomb
+pub struct Bomb;
+impl Bomb {
+    pub fn load(path: &str) -> Mesh {
+        println!("Loading bomb model...");
+        let before = std::time::Instant::now();
+        let (models, _materials) = tobj::load_obj(
+            path,
+            &tobj::LoadOptions {
+                triangulate: true,
+                single_index: true,
+                ..Default::default()
+            },
+        )
+        .expect("Failed to load bomb model");
+        let after = std::time::Instant::now();
+        println!(
+            "Done in {:.3}ms.",
+            after.duration_since(before).as_micros() as f32 / 1e3
+        );
+
+        if models.len() > 1 || models.len() == 0 {
+            panic!("Please use a model with a single mesh!")
+            // You could try merging the vertices and indices
+            // of the separate meshes into a single mesh.
+            // I'll leave that as an optional exercise. ;)
+        }
+
+        let bomb = models[0].to_owned();
+        println!(
+            "Loaded {} with {} points and {} triangles.",
+            bomb.name,
+            bomb.mesh.positions.len() / 3,
+            bomb.mesh.indices.len() / 3,
+        );
+
+        Mesh::from(bomb.mesh, [1.0, 1.0, 1.0, 1.0])
+    }
+}
+
+
+
 
 // Lunar terrain
 

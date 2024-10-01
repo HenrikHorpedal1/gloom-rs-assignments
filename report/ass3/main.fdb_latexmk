@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1727775862.17126 "main.tex" "main.pdf" "main" 1727775864.97777 0
+["pdflatex"] 1727776265.91488 "main.tex" "main.pdf" "main" 1727776269.25085 0
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1136768653 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1136768653 1524 4414a8315f39513458b80dfc63bff03a ""
@@ -36,9 +36,11 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1713093404.78977 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1713093387 8221421 7d81e2c95a0ebceaf74a0e91bc93851d ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "main.aux" 1727775864.95392 869 85f13a2119276bd272f4b111bfaee1fc "pdflatex"
-  "main.tex" 1727775858.35796 1738 08bcac0bc307a408e709b855e2775d18 ""
+  "main.aux" 1727776269.22731 1142 85ccddabb651da4a8b04ed9c49fc1566 "pdflatex"
+  "main.tex" 1727776261.77159 1933 2434813f73821306b924828e53270934 ""
+  "pictures/5-stk.png" 1727776044.62381 721022 e8c4e819d6c42d40dbc37276e91c6af7 ""
   "pictures/RIKTIG.png" 1727704738.68943 707662 d00407d97d8ce5cf40a147682edf884c ""
+  "pictures/door-open.png" 1727772534.71093 480219 b3df003191d68e30b1df380176ed68f0 ""
   "pictures/green-moon-crater.png" 1727612125.69545 1996224 261fb940c66f3c263bffd08763331919 ""
   "pictures/heli-on-moon.png" 1727631365.47211 549753 434af361a66512ce0e0eeb3cfead728a ""
   "pictures/ikke-skygge.png" 1727695857.03891 590203 878c428a9d07b23bbaf9cb6ad25dddb3 ""

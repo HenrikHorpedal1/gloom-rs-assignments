@@ -269,8 +269,12 @@ fn main() {
         // load meshes
         let lunar_terrain_path: &str = "./resources/lunarsurface.obj";
         let helicopter_path: &str = "./resources/helicopter.obj";
+        let bomb_path: &str = "./resources/bomb.obj";
         let lunar_terrain_mesh = mesh::Terrain::load(lunar_terrain_path);
         let heilcopter = mesh::Helicopter::load(helicopter_path);
+        let bomb_mesh = mesh::Bomb::load(bomb_path);
+
+        
 
         // VAOs
 
@@ -315,12 +319,23 @@ fn main() {
                 &heilcopter.tail_rotor.indices,
             )
         };
+        let bomb_vao = unsafe {
+            create_vao(
+                &bomb_mesh.vertices,
+                &bomb_mesh.colors,
+                &bomb_mesh.normals,
+                &bomb_mesh.indices,
+            )};
 
         // Scene nodes
         let mut terrain_root_node = SceneNode::new();
         let mut terrain_node =
         SceneNode::from_vao(lunar_surface_vao, lunar_terrain_mesh.index_count);
         terrain_root_node.add_child(&terrain_node);
+
+        let mut bomb_root = SceneNode::new();
+        let mut bomb_node = 
+        SceneNode::from_vao(bomb_vao,bomb_mesh.index_count);
 
         // Multiple helicopters:
         let num_helicopters = 5;
@@ -349,6 +364,8 @@ fn main() {
             body_node.add_child(&tail_rotor_node);
 
             // Inital positions
+            bomb_node.position = glm::vec3(0.0,15.0,0.0); 
+            
             tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
             body_node.position = glm::vec3(0.0, 10.0, 0.0);
             body_node.rotation.y = 3.14;
