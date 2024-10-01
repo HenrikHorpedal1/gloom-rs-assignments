@@ -58,13 +58,11 @@ impl Bomb {
             );
         }
 
-        let bomb = models[0].to_owned();
-        println!(
-            "Loaded {} with {} points and {} triangles.",
-            bomb.name,
-            bomb.mesh.positions.len() / 3,
-            bomb.mesh.indices.len() / 3,
-        );
+        let bomb = models
+            .iter()
+            .find(|m| m.name == "TNT_Dinamite")
+            .expect("Incorrect model file!")
+            .to_owned();
 
         Mesh::from(bomb.mesh, [1.0, 0.0, 0.0, 1.0])
     }
