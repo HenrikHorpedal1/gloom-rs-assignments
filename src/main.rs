@@ -485,7 +485,7 @@ fn main() {
                 heli_tail_rotors[i].rotation += glm::vec3(rotor_speed * delta_time, 0.0, 0.0);
 
                 // Helicopter path
-                let heading = toolbox::simple_heading_animation(elapsed + offset*i);
+                let heading = toolbox::simple_heading_animation(elapsed + offset * i as f32);
                 heli_bodies[i].position[0] = heading.x;
                 heli_bodies[i].position[2] = heading.z;
                 heli_bodies[i].rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
