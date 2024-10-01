@@ -537,7 +537,7 @@ fn main() {
 
                 //bombs
                 if drop_bomb {
-                    let drop_speed = 4;
+                    let drop_speed = 4.0;
                     bombs[i].position.y -= drop_speed * delta_time;
                     bombs[i].position.y = bombs[i].position.y.clamp(-15.0,1000.0);
                 }
