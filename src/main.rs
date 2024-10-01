@@ -369,7 +369,7 @@ fn main() {
 
 
             // Inital positions
-            bomb_node.position = glm::vec3(0.0,0.0,0.0); 
+            bomb_node.scale = glm::vec3(0.01,0.01,0.01); 
             
             tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
             body_node.position = glm::vec3(0.0, 10.0, 0.0);
