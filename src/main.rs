@@ -327,6 +327,7 @@ fn main() {
         let mut heli_bodies = vec![];
         let mut heli_main_rotors = vec![];
         let mut heli_tail_rotors = vec![];
+        let mut heli_doors = vec![];
 
         for i in 0..num_helicopters {
             
@@ -354,6 +355,7 @@ fn main() {
             heli_bodies.push(body_node);
             heli_main_rotors.push(main_rotor_node);
             heli_tail_rotors.push(tail_rotor_node);
+            heli_doors.push(door_node);
         }
         // == // Set up your shaders here
         let simple_shader = unsafe {
@@ -411,6 +413,10 @@ fn main() {
             // Handle keyboard input
             let mut movement_direction = glm::vec3(0.0, 0.0, 0.0);
 
+            let mut open_door = false;
+
+            let door_angle = 0;
+            
             if let Ok(keys) = pressed_keys.lock() {
                 for key in keys.iter() {
                     match key {
@@ -446,6 +452,8 @@ fn main() {
                             vertical_rot = starting_vertical_rot;
                         }
 
+                        // open all doors
+                        VirtualKeyCode::K => open_door = true,
                         // default handler:
                         _ => {}
                     }
@@ -490,6 +498,14 @@ fn main() {
                 heli_bodies[i].position[2] = heading.z;
                 heli_bodies[i].rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
 
+
+                //doors
+                if open_door {
+
+                    let door_speed = 0.1;
+                    heli_doors[i].rotation.y += door_speed * delta_time;
+                    heli_doors[i].rotation.y = heli_doors[i].rotation.y.clamp(0.0, 3.14/2.0);
+                }
             }
            
 
