@@ -476,7 +476,7 @@ fn main() {
             );
 
             let view_projection_mat = projection_mat * view_matrix;
-            let mut offset = 1.0;
+            let mut offset = 0.5;
             for i in 0..num_helicopters {
 
                 // rotor movement
@@ -485,12 +485,11 @@ fn main() {
                 heli_tail_rotors[i].rotation += glm::vec3(rotor_speed * delta_time, 0.0, 0.0);
 
                 // Helicopter path
-                let heading = toolbox::simple_heading_animation(elapsed + offset);
+                let heading = toolbox::simple_heading_animation(elapsed + offset*i);
                 heli_bodies[i].position[0] = heading.x;
                 heli_bodies[i].position[2] = heading.z;
                 heli_bodies[i].rotation = glm::vec3(heading.pitch, heading.yaw, heading.roll);
 
-                offset += 1.0;
             }
            
 
