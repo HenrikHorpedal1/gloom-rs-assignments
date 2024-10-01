@@ -333,11 +333,6 @@ fn main() {
         SceneNode::from_vao(lunar_surface_vao, lunar_terrain_mesh.index_count);
         terrain_root_node.add_child(&terrain_node);
 
-        let mut bomb_root = SceneNode::new();
-        let mut bomb_node = 
-        SceneNode::from_vao(bomb_vao,bomb_mesh.index_count);
-        terrain_node.add_child(&bomb_root);
-        bomb_root.add_child(&bomb_node);
 
         // Multiple helicopters:
         let num_helicopters = 5;
@@ -345,6 +340,7 @@ fn main() {
         let mut heli_main_rotors = vec![];
         let mut heli_tail_rotors = vec![];
         let mut heli_doors = vec![];
+        let mut bombs = vec![];
 
         for i in 0..num_helicopters {
             
@@ -365,8 +361,15 @@ fn main() {
                 SceneNode::from_vao(heli_tail_rotor_vao, heilcopter.tail_rotor.index_count);
             body_node.add_child(&tail_rotor_node);
 
+            let mut bomb_root = SceneNode::new();
+            let mut bomb_node = 
+            SceneNode::from_vao(bomb_vao,bomb_mesh.index_count);
+            body_node.add_child(&bomb_root);
+            bomb_root.add_child(&bomb_node);
+
+
             // Inital positions
-            bomb_node.position = glm::vec3(0.0,15.0,0.0); 
+            bomb_node.position = glm::vec3(0.0,0.0,0.0); 
             
             tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
             body_node.position = glm::vec3(0.0, 10.0, 0.0);
@@ -376,6 +379,7 @@ fn main() {
             heli_main_rotors.push(main_rotor_node);
             heli_tail_rotors.push(tail_rotor_node);
             heli_doors.push(door_node);
+            bombs.push(bomb_node);
         }
         // == // Set up your shaders here
         let simple_shader = unsafe {
@@ -400,7 +404,7 @@ fn main() {
         let mut vertical_rot: f32 = starting_vertical_rot;
 
         let mut open_door = false;
-
+        let mut drop_bomb = false;
         // The main rendering loop
         let first_frame_time = std::time::Instant::now();
         let mut previous_frame_time = first_frame_time;
@@ -475,6 +479,9 @@ fn main() {
 
                         // open all doors
                         VirtualKeyCode::K => open_door = true,
+
+                        // Drop a bomb
+                        VirtualKeyCode::B => drop_bomb = true,
                         // default handler:
                         _ => {}
                     }
@@ -526,6 +533,13 @@ fn main() {
                     let door_speed = 0.5;
                     heli_doors[i].position.z += door_speed * delta_time;
                     heli_doors[i].position.z = heli_doors[i].position.z.clamp(0.0,1.6);
+                }
+
+                //bombs
+                if drop_bomb {
+                    let drop_speed = 4;
+                    bombs[i].position.y -= drop_speed * delta_time;
+                    bombs[i].position.y = bombs[i].position.y.clamp(-15.0,1000.0);
                 }
             }
            
