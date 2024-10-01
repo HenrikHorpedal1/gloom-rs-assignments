@@ -351,6 +351,7 @@ fn main() {
             // Inital positions
             tail_rotor_node.reference_point = glm::vec3(0.35, 2.3, 10.4);
             body_node.position = glm::vec3(0.0, 10.0, 0.0);
+            body_node.rotation.y = 3.14;
 
             heli_bodies.push(body_node);
             heli_main_rotors.push(main_rotor_node);
@@ -378,6 +379,8 @@ fn main() {
         let starting_vertical_rot = 0.0;
         let mut horizontal_rot: f32 = starting_horizontal_rot;
         let mut vertical_rot: f32 = starting_vertical_rot;
+
+        let mut open_door = false;
 
         // The main rendering loop
         let first_frame_time = std::time::Instant::now();
@@ -413,8 +416,7 @@ fn main() {
             // Handle keyboard input
             let mut movement_direction = glm::vec3(0.0, 0.0, 0.0);
 
-            let mut open_door = false;
-
+            
             let door_angle = 0;
             
             if let Ok(keys) = pressed_keys.lock() {
