@@ -336,6 +336,7 @@ fn main() {
         let mut bomb_root = SceneNode::new();
         let mut bomb_node = 
         SceneNode::from_vao(bomb_vao,bomb_mesh.index_count);
+        terrain_root_node.add_child(&bomb_root);
 
         // Multiple helicopters:
         let num_helicopters = 5;
