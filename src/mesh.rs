@@ -66,7 +66,7 @@ impl Bomb {
             bomb.mesh.indices.len() / 3,
         );
 
-        Mesh::from(bomb.mesh, [1.0, 1.0, 1.0, 1.0])
+        Mesh::from(bomb.mesh, [1.0, 0.0, 0.0, 1.0])
     }
 }
 
