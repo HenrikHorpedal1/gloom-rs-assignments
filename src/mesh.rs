@@ -48,13 +48,14 @@ impl Bomb {
             "Done in {:.3}ms.",
             after.duration_since(before).as_micros() as f32 / 1e3
         );
-
-        println!("{}",models.len());
-        if models.len() > 1 || models.len() == 0 {
-            panic!("Please use a model with a single mesh!")
-            // You could try merging the vertices and indices
-            // of the separate meshes into a single mesh.
-            // I'll leave that as an optional exercise. ;)
+        
+        for model in &models {
+            println!(
+                "Loaded {} with {} points and {} triangles.",
+                model.name,
+                model.mesh.positions.len() / 3,
+                model.mesh.indices.len() / 3
+            );
         }
 
         let bomb = models[0].to_owned();
