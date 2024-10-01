@@ -49,6 +49,7 @@ impl Bomb {
             after.duration_since(before).as_micros() as f32 / 1e3
         );
 
+        println!("{}",models.len());
         if models.len() > 1 || models.len() == 0 {
             panic!("Please use a model with a single mesh!")
             // You could try merging the vertices and indices
