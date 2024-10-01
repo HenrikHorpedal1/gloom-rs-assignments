@@ -506,7 +506,7 @@ fn main() {
 
                     let door_speed = 0.5;
                     heli_doors[i].position.z += door_speed * delta_time;
-                    heli_doors[i].position.z = heli_doors[i].position.z.clamp(0.0,1.0);
+                    heli_doors[i].position.z = heli_doors[i].position.z.clamp(0.0,1.8);
                 }
             }
            
