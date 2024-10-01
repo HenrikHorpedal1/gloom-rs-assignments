@@ -159,7 +159,8 @@ unsafe fn draw_scene(
     let rotation_y_matrix = glm::rotation(node.rotation[1], &glm::vec3(0.0, 1.0, 0.0));
     let rotation_z_matrix = glm::rotation(node.rotation[2], &glm::vec3(0.0, 0.0, 1.0));
 
-    let rotation_matrix = rotation_x_matrix * rotation_y_matrix * rotation_z_matrix; // The animation is going to look a little off, due to us so far using extrinsic euler angles instead of intrinsic angles. To partially mitigate this we suggest first applying Z rotation, then the Y rotation, then the X rotation.
+    let rotation_matrix = rotation_z_matrix * rotation_y_matrix * rotation_x_matrix; // The animation is going to look a little off, due to us so far using extrinsic euler angles instead of intrinsic angles. To partially mitigate this we suggest first applying Z rotation, then the Y rotation, then the X rotation.
+                                                                                     
 
     let scaling_matrix = glm::scaling(&node.scale); // allways unit scaling anyways
 
@@ -540,6 +541,8 @@ fn main() {
                     let drop_speed = 4.0;
                     bombs[i].position.y -= drop_speed * delta_time;
                     bombs[i].position.y = bombs[i].position.y.clamp(-15.0,1000.0);
+
+
                 }
             }
            
